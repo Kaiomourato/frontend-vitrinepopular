@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tokens de design — Vitrine Popular
+   Cores inspiradas em feiras populares: vibrante mas organizado
+   ============================================================ */
+@layer base {
+  :root {
+    /* Paleta principal */
+    --color-primary:       #E8400A; /* laranja-vermelho vibrante — cor da marca */
+    --color-primary-hover: #C93408;
+    --color-primary-light: #FEF0EC;
+
+    /* Superfícies */
+    --color-bg:            #F8F7F4; /* off-white levemente quente */
+    --color-surface:       #FFFFFF;
+    --color-surface-hover: #F3F2EF;
+    --color-border:        #E5E3DE;
+    --color-border-strong: #C8C6C0;
+
+    /* Texto */
+    --color-text-primary:   #1A1A18;
+    --color-text-secondary: #6B6963;
+    --color-text-muted:     #A09D97;
+
+    /* Semânticas */
+    --color-success:        #16A34A;
+    --color-success-light:  #F0FDF4;
+    --color-warning:        #D97706;
+    --color-warning-light:  #FFFBEB;
+    --color-danger:         #DC2626;
+    --color-danger-light:   #FEF2F2;
+
+    /* Tipografia */
+    --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Raios de borda */
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  14px;
+    --radius-xl:  20px;
+    --radius-full: 9999px;
+
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+  }
+
+  /* Reset base */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar discreta */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+}
+
+/* ============================================================
+   Utilitários globais — complementam o Tailwind
+   ============================================================ */
+@layer utilities {
+  .container-app {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-app { padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+
+  @media (min-width: 1024px) {
+    .container-app { padding-left: 2rem; padding-right: 2rem; }
+  }
+
+  /* Linha de texto com truncate em N linhas */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+}
