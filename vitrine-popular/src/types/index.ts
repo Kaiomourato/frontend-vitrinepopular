@@ -4,7 +4,6 @@
 // ============================================================
 
 // ── Autenticação ──────────────────────────────────────────────────────────────
-
 export interface LojaVinculada {
   id: number
   nome: string
@@ -19,30 +18,27 @@ export interface UsuarioResponse {
 }
 
 export interface LoginResponse {
-  usuario: UsuarioResponse
+  perfil: UsuarioResponse  // backend retorna "perfil", não "usuario"
   token: string
 }
 
 // ── Categorias ────────────────────────────────────────────────────────────────
-
 export interface CategoriaResponse {
   id: number
   nome: string
 }
 
 // ── Lojas ────────────────────────────────────────────────────────────────────
-
 export interface LojaResponse {
   id: number
   nome: string
   endereco: string | null
   whatsapp: string | null
   isParceira: boolean
-  pin?: string // só retornado no momento de criação
+  pin?: string
 }
 
 // ── Ofertas ───────────────────────────────────────────────────────────────────
-
 export type StatusOferta = 'ATIVA' | 'EXPIRADA' | 'REMOVIDA'
 
 export interface LojaResumo {
@@ -64,14 +60,13 @@ export interface OfertaResponse {
   preco: number
   imagemUrl: string
   status: StatusOferta
-  dataPostagem: string        // ISO 8601 — formatar no frontend
+  dataPostagem: string
   votosAcabou: number
   votosAindaTem: number
   loja: LojaResumo
   categoria: CategoriaResumo
 }
 
-// Dados enviados ao criar/editar uma oferta (campo 'dados' do multipart)
 export interface OfertaRequest {
   produtoNome: string
   descricao?: string
@@ -81,12 +76,11 @@ export interface OfertaRequest {
 }
 
 // ── Paginação (padrão Spring Page<T>) ────────────────────────────────────────
-
 export interface PageResponse<T> {
   content: T[]
   totalElements: number
   totalPages: number
-  number: number        // página atual (0-indexed)
+  number: number
   size: number
   first: boolean
   last: boolean
@@ -94,7 +88,6 @@ export interface PageResponse<T> {
 }
 
 // ── Erro da API ───────────────────────────────────────────────────────────────
-
 export interface ErroApi {
   status: number
   message: string

@@ -30,9 +30,10 @@ export function Login() {
     setLoading(true)
     try {
       const resp = await authService.login(data.email, data.senha)
-      login(resp.token, resp.usuario)
-      dispararToast(`Bem-vindo, ${resp.usuario.nome}!`, 'success')
-      navigate(resp.usuario.perfil === 'LOJISTA' ? '/dashboard' : '/')
+      // O backend retorna { perfil: UsuarioResponse, token: string }
+      login(resp.token, resp.perfil)
+      dispararToast(`Bem-vindo, ${resp.perfil.nome}!`, 'success')
+      navigate(resp.perfil.perfil === 'LOJISTA' ? '/dashboard' : '/')
     } catch (err) {
       dispararToast(extrairErroApi(err), 'error')
     } finally {
@@ -43,7 +44,6 @@ export function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: 'var(--color-bg)' }}>
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 font-bold text-xl" style={{ color: 'var(--color-primary)' }}>
             <ShoppingBag size={28} /> Vitrine Popular
@@ -55,7 +55,6 @@ export function Login() {
           </p>
         </div>
 
-        {/* Formulário */}
         <div className="rounded-[20px] border p-6 md:p-8 flex flex-col gap-5"
           style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
