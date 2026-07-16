@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RotaProtegida } from '@/components/auth/RotaProtegida'
+import { RotaAdmin } from '@/components/auth/RotaAdmin'
 import { Layout } from '@/components/layout/Layout'
 import { ToastContainer } from '@/components/ui/ToastContainer'
 
@@ -13,6 +14,8 @@ import { Registro }      from '@/pages/Registro'
 import { Dashboard }     from '@/pages/Dashboard'
 import { NovaOferta }    from '@/pages/NovaOferta'
 import { EditarOferta }  from '@/pages/EditarOferta'
+import { Favoritos }     from '@/pages/Favoritos'
+import { PainelAdmin }   from '@/pages/admin/PainelAdmin'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +43,13 @@ export default function App() {
               <Route path="/dashboard"         element={<Dashboard />} />
               <Route path="/oferta/nova"       element={<NovaOferta />} />
               <Route path="/oferta/:id/editar" element={<EditarOferta />} />
+              <Route path="/favoritos"         element={<Favoritos />} />
+            </Route>
+          </Route>
+
+          <Route element={<RotaAdmin />}>
+            <Route element={<Layout />}>
+              <Route path="/admin" element={<PainelAdmin />} />
             </Route>
           </Route>
 

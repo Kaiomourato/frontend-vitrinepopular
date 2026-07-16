@@ -1,13 +1,14 @@
 import api from './api'
-import type { OfertaResponse, PageResponse } from '@/types'
+import type { ListarOfertasParams, OfertaResponse, PageResponse } from '@/types'
 
 // ── Queries públicas (sem token) ──────────────────────────────────────────────
 
 export const ofertasService = {
-  // Feed principal paginado
-  listar: (page = 0, size = 12) =>
-    api.get<PageResponse<OfertaResponse>>('/api/ofertas', { params: { page, size } })
-      .then(r => r.data),
+  // Feed principal paginado — aceita ordenação e filtros combináveis (RF06/RF07)
+  listar: ({ page = 0, size = 12, sort, precoMin, precoMax, categoriaId }: ListarOfertasParams = {}) =>
+    api.get<PageResponse<OfertaResponse>>('/api/ofertas', {
+      params: { page, size, sort, precoMin, precoMax, categoriaId },
+    }).then(r => r.data),
 
   // Detalhes de uma oferta
   buscarPorId: (id: number) =>
@@ -31,9 +32,12 @@ export const ofertasService = {
       params: { q, page, size },
     }).then(r => r.data),
 
-  // Votar "Acabou"
+  // Sinalização colaborativa (RF10) — agora exigem token e bloqueiam voto duplicado
   votarAcabou: (id: number) =>
     api.patch(`/api/ofertas/${id}/votar-acabou`).then(r => r.data),
+
+  votarAindaTem: (id: number) =>
+    api.patch(`/api/ofertas/${id}/votar-ainda-tem`).then(r => r.data),
 
   // ── Mutations autenticadas ──────────────────────────────────────────────────
 

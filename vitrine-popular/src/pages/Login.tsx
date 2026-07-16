@@ -33,7 +33,10 @@ export function Login() {
       // O backend retorna { perfil: UsuarioResponse, token: string }
       login(resp.token, resp.perfil)
       dispararToast(`Bem-vindo, ${resp.perfil.nome}!`, 'success')
-      navigate(resp.perfil.perfil === 'LOJISTA' ? '/dashboard' : '/')
+      const destino = resp.perfil.perfil === 'ADMIN' ? '/admin'
+        : resp.perfil.perfil === 'LOJISTA' ? '/dashboard'
+        : '/'
+      navigate(destino)
     } catch (err) {
       dispararToast(extrairErroApi(err), 'error')
     } finally {

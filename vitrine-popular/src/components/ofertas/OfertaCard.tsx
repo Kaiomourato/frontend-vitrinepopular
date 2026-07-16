@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, ThumbsDown, Clock } from 'lucide-react'
+import axios from 'axios'
+import { MapPin, ThumbsDown, Clock, Heart } from 'lucide-react'
 import { formatarPreco, formatarDataRelativa } from '@/lib/utils'
 import { ofertasService } from '@/services/ofertas'
-import { Badge } from '@/components/ui'
+import { useAuthStore } from '@/store/authStore'
+import { useFavoritos, useToggleFavorito } from '@/hooks/useFavoritos'
+import { Badge, dispararToast } from '@/components/ui'
 import type { OfertaResponse } from '@/types'
 
 interface OfertaCardProps {
@@ -13,19 +16,36 @@ interface OfertaCardProps {
 
 export function OfertaCard({ oferta, onVotoAcabou }: OfertaCardProps) {
   const navigate = useNavigate()
+  const isAutenticado = useAuthStore(s => s.isAutenticado)
+  const { idsFavoritos } = useFavoritos()
+  const toggleFavorito = useToggleFavorito()
+  const favoritado = idsFavoritos.has(oferta.id)
   const [votando, setVotando] = useState(false)
   const [votou, setVotou] = useState(false)
 
+  function handleFavoritar(e: React.MouseEvent) {
+    e.stopPropagation()
+    toggleFavorito.mutate({ oferta, favoritado })
+  }
+
   async function handleVotarAcabou(e: React.MouseEvent) {
     e.stopPropagation()
+    if (!isAutenticado) {
+      dispararToast('Faça login para sinalizar', 'info')
+      navigate('/login')
+      return
+    }
     if (votou || votando) return
     setVotando(true)
     try {
       await ofertasService.votarAcabou(oferta.id)
       setVotou(true)
       onVotoAcabou?.()
-    } catch {
-      // silencioso
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 400) {
+        dispararToast('Você já sinalizou esta oferta.', 'error')
+        setVotou(true)
+      }
     } finally {
       setVotando(false)
     }
@@ -54,12 +74,21 @@ export function OfertaCard({ oferta, onVotoAcabou }: OfertaCardProps) {
             {oferta.categoria.nome}
           </span>
         </div>
-        {/* Badge oficial */}
-        {oferta.status === 'ATIVA' && (
-          <div className="absolute top-2 right-2">
-            <Badge variant="success">Disponível</Badge>
-          </div>
-        )}
+        {/* Badge oficial + favorito */}
+        <div className="absolute top-2 right-2 flex items-center gap-1.5">
+          {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
+          {isAutenticado && (
+            <button
+              onClick={handleFavoritar}
+              disabled={toggleFavorito.isPending}
+              className="w-7 h-7 rounded-full flex items-center justify-center transition-all"
+              style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}
+              title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+            >
+              <Heart size={14} fill={favoritado ? '#fff' : 'none'} stroke="#fff" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Conteúdo */}

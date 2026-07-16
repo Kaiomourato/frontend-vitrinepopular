@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# Vitrine Popular — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend do TCC "Vitrine Popular": uma vitrine de ofertas do comércio popular de Picos-PI.
+React 19 + TypeScript + Vite + Tailwind 4 + React Router 7 + TanStack React Query 5 + Zustand + Axios.
 
-Currently, two official plugins are available:
+A aplicação é uma PWA (manifesto + service worker via `vite-plugin-pwa`), instalável e com
+cache offline básico para o feed público (ofertas, lojas, categorias).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Rodando localmente
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Variáveis de ambiente
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Variável         | Descrição                                          | Exemplo                          |
+|------------------|-----------------------------------------------------|-----------------------------------|
+| `VITE_API_URL`   | URL base da API do backend (Spring Boot)            | `https://vitrine-popular-api.onrender.com` |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Crie um arquivo `.env` (não versionado) na raiz do projeto para desenvolvimento local, se a API
+não estiver em `http://localhost:8080`:
+
 ```
+VITE_API_URL=http://localhost:8080
+```
+
+## Deploy (Vercel)
+
+No painel do projeto na Vercel, em **Settings → Environment Variables**, defina:
+
+- `VITE_API_URL` — a URL pública do backend hospedado no Render (ex.: `https://vitrine-popular-api.onrender.com`).
+
+Sem essa variável configurada, o app cai no fallback `http://localhost:8080` (definido em
+`src/services/api.ts`) e todas as chamadas à API falharão em produção.
+
+### CORS no backend (Render)
+
+O backend usa a variável de ambiente `FRONTEND_ORIGIN` para liberar o CORS. No serviço do Render,
+essa variável precisa conter o domínio real do frontend publicado na Vercel (ex.:
+`https://vitrine-popular.vercel.app`). Caso contrário, o backend cai no fallback de localhost e
+bloqueia as requisições vindas de produção.
+
+## Build
+
+```bash
+npm run build
+```
+
+Gera `dist/` com os assets de produção, incluindo `manifest.webmanifest` e `sw.js` (service worker)
+do plugin PWA.

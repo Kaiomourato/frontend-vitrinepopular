@@ -13,7 +13,7 @@ export interface UsuarioResponse {
   id: number
   nome: string
   email: string
-  perfil: 'LOJISTA' | 'COLABORADOR'
+  perfil: 'LOJISTA' | 'COLABORADOR' | 'ADMIN'
   loja: LojaVinculada | null
 }
 
@@ -73,6 +73,18 @@ export interface OfertaRequest {
   preco: number
   lojaId: number
   categoriaId: number
+}
+
+// ── Ordenação e filtros do feed (RF06/RF07) ─────────────────────────────────
+export type OrdenacaoOferta = 'recentes' | 'preco' | 'interacao'
+
+export interface ListarOfertasParams {
+  page?: number
+  size?: number
+  sort?: OrdenacaoOferta
+  precoMin?: number
+  precoMax?: number
+  categoriaId?: number
 }
 
 // ── Paginação (padrão Spring Page<T>) ────────────────────────────────────────

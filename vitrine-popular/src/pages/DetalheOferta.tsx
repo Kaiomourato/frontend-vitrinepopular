@@ -1,17 +1,25 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, MapPin, MessageCircle, Clock, Tag, ThumbsDown, Share2 } from 'lucide-react'
+import axios from 'axios'
+import { ArrowLeft, MapPin, MessageCircle, Clock, Tag, ThumbsUp, ThumbsDown, Share2, Heart } from 'lucide-react'
 import { ofertasService } from '@/services/ofertas'
+import { useAuthStore } from '@/store/authStore'
+import { useFavoritos, useToggleFavorito } from '@/hooks/useFavoritos'
 import { Button, Badge, Spinner } from '@/components/ui'
 import { formatarPreco, formatarDataRelativa, formatarWhatsApp } from '@/lib/utils'
 import { useState } from 'react'
 import { dispararToast } from '@/components/ui'
 
+type TipoVoto = 'ainda-tem' | 'acabou'
+
 export function DetalheOferta() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [votando, setVotando] = useState(false)
+  const isAutenticado = useAuthStore(s => s.isAutenticado)
+  const { idsFavoritos } = useFavoritos()
+  const toggleFavorito = useToggleFavorito()
+  const [votando, setVotando] = useState<TipoVoto | null>(null)
   const [votou, setVotou] = useState(false)
 
   const { data: oferta, isLoading, isError } = useQuery({
@@ -20,18 +28,36 @@ export function DetalheOferta() {
     enabled: !!id,
   })
 
-  async function handleVotar() {
+  const favoritado = oferta ? idsFavoritos.has(oferta.id) : false
+
+  function handleFavoritar() {
+    if (!oferta) return
+    toggleFavorito.mutate({ oferta, favoritado })
+  }
+
+  async function handleVotar(tipo: TipoVoto) {
+    if (!isAutenticado) {
+      dispararToast('Faça login para sinalizar', 'info')
+      navigate('/login')
+      return
+    }
     if (votou || votando || !id) return
-    setVotando(true)
+    setVotando(tipo)
     try {
-      await ofertasService.votarAcabou(Number(id))
+      if (tipo === 'ainda-tem') await ofertasService.votarAindaTem(Number(id))
+      else await ofertasService.votarAcabou(Number(id))
       setVotou(true)
       queryClient.invalidateQueries({ queryKey: ['oferta', id] })
-      dispararToast('Voto registrado! Obrigado pela contribuição.', 'success')
-    } catch {
-      dispararToast('Não foi possível registrar o voto.', 'error')
+      dispararToast('Sinalização registrada! Obrigado pela contribuição.', 'success')
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 400) {
+        dispararToast('Você já sinalizou esta oferta.', 'error')
+        setVotou(true)
+      } else {
+        dispararToast('Não foi possível registrar sua sinalização.', 'error')
+      }
     } finally {
-      setVotando(false)
+      setVotando(null)
     }
   }
 
@@ -72,11 +98,28 @@ export function DetalheOferta() {
 
         {/* Detalhes */}
         <div className="flex flex-col gap-5">
-          <div className="flex items-start gap-2">
-            <Badge variant="primary">{oferta.categoria.nome}</Badge>
-            {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
-            {oferta.status === 'EXPIRADA' && <Badge variant="warning">Expirada</Badge>}
-            {oferta.status === 'REMOVIDA' && <Badge variant="danger">Removida</Badge>}
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2 flex-wrap">
+              <Badge variant="primary">{oferta.categoria.nome}</Badge>
+              {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
+              {oferta.status === 'EXPIRADA' && <Badge variant="warning">Expirada</Badge>}
+              {oferta.status === 'REMOVIDA' && <Badge variant="danger">Removida</Badge>}
+            </div>
+            {isAutenticado && (
+              <button
+                onClick={handleFavoritar}
+                disabled={toggleFavorito.isPending}
+                className="w-9 h-9 rounded-full flex items-center justify-center border shrink-0 transition-all"
+                style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface)' }}
+                title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              >
+                <Heart
+                  size={16}
+                  fill={favoritado ? 'var(--color-danger)' : 'none'}
+                  stroke={favoritado ? 'var(--color-danger)' : 'var(--color-text-secondary)'}
+                />
+              </button>
+            )}
           </div>
 
           <div>
@@ -129,20 +172,35 @@ export function DetalheOferta() {
                 Falar no WhatsApp
               </a>
             )}
-            <div className="flex gap-2">
-              <Button
-                variant={votou ? 'danger' : 'outline'}
-                className="flex-1"
-                onClick={handleVotar}
-                loading={votando}
-                disabled={votou}
-              >
-                <ThumbsDown size={16} />
-                {votou ? 'Voto registrado' : `Acabou (${oferta.votosAcabou})`}
-              </Button>
-              <Button variant="ghost" onClick={handleCompartilhar}>
-                <Share2 size={16} />
-              </Button>
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-muted)' }}>
+                Essa oferta ainda está disponível?
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => handleVotar('ainda-tem')}
+                  loading={votando === 'ainda-tem'}
+                  disabled={votou}
+                >
+                  <ThumbsUp size={16} />
+                  Ainda tem ({oferta.votosAindaTem})
+                </Button>
+                <Button
+                  variant={votou ? 'danger' : 'outline'}
+                  className="flex-1"
+                  onClick={() => handleVotar('acabou')}
+                  loading={votando === 'acabou'}
+                  disabled={votou}
+                >
+                  <ThumbsDown size={16} />
+                  Acabou ({oferta.votosAcabou})
+                </Button>
+                <Button variant="ghost" onClick={handleCompartilhar}>
+                  <Share2 size={16} />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

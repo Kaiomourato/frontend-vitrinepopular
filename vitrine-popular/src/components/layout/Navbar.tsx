@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, ShoppingBag, User, Plus, LayoutDashboard, LogOut, Menu, X } from 'lucide-react'
+import { Search, ShoppingBag, User, Plus, LayoutDashboard, LogOut, Menu, X, Heart, ShieldAlert } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 
 export function Navbar() {
@@ -121,6 +121,15 @@ export function Navbar() {
                       <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{usuario?.email}</p>
                     </div>
                     <Link
+                      to="/favoritos"
+                      onClick={() => setDropdownAberto(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all hover:bg-[var(--color-surface-hover)]"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
+                      <Heart size={15} />
+                      Favoritos
+                    </Link>
+                    <Link
                       to="/dashboard"
                       onClick={() => setDropdownAberto(false)}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all hover:bg-[var(--color-surface-hover)]"
@@ -129,6 +138,17 @@ export function Navbar() {
                       <LayoutDashboard size={15} />
                       Meu painel
                     </Link>
+                    {usuario?.perfil === 'ADMIN' && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setDropdownAberto(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-all hover:bg-[var(--color-surface-hover)]"
+                        style={{ color: 'var(--color-text-primary)' }}
+                      >
+                        <ShieldAlert size={15} />
+                        Admin
+                      </Link>
+                    )}
                     <button
                       onClick={handleLogout}
                       className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm transition-all hover:bg-[var(--color-danger-light)]"
@@ -194,9 +214,17 @@ export function Navbar() {
                 <User size={16} />
                 {usuario?.nome}
               </div>
+              <Link to="/favoritos" onClick={() => setMenuAberto(false)} className="flex items-center gap-2 text-sm py-1" style={{ color: 'var(--color-text-primary)' }}>
+                <Heart size={16} /> Favoritos
+              </Link>
               <Link to="/dashboard" onClick={() => setMenuAberto(false)} className="flex items-center gap-2 text-sm py-1" style={{ color: 'var(--color-text-primary)' }}>
                 <LayoutDashboard size={16} /> Meu painel
               </Link>
+              {usuario?.perfil === 'ADMIN' && (
+                <Link to="/admin" onClick={() => setMenuAberto(false)} className="flex items-center gap-2 text-sm py-1" style={{ color: 'var(--color-text-primary)' }}>
+                  <ShieldAlert size={16} /> Admin
+                </Link>
+              )}
               {usuario?.perfil === 'LOJISTA' && (
                 <Link to="/oferta/nova" onClick={() => setMenuAberto(false)}
                   className="flex items-center justify-center gap-2 text-sm font-medium py-2.5 rounded-[10px]"
