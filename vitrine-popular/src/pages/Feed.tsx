@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import { RefreshCw, Search, Sparkles } from 'lucide-react'
@@ -31,7 +32,12 @@ function agruparEmLinhas<T>(itens: T[], colunas: number): T[][] {
 }
 
 export function Feed() {
-  const [categoria, setCategoria] = useState<number | null>(null)
+  // Permite chegar com uma categoria pré-selecionada vindo da tela Descobrir
+  const [searchParams] = useSearchParams()
+  const categoriaInicial = searchParams.get('categoria')
+  const [categoria, setCategoria] = useState<number | null>(
+    categoriaInicial ? Number(categoriaInicial) : null
+  )
   const [sort, setSort] = useState<OrdenacaoOferta>('recentes')
   const [precoMin, setPrecoMin] = useState('')
   const [precoMax, setPrecoMax] = useState('')
