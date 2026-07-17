@@ -10,14 +10,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', loading, children, disabled, ...props }, ref) => {
     const base =
-      'inline-flex items-center justify-center gap-2 font-medium transition-all rounded-[10px] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]'
+      'inline-flex items-center justify-center gap-2 font-medium transition-all rounded-lg disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]'
 
     const variants = {
-      primary:   'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] focus-visible:ring-[var(--color-primary)]',
-      secondary: 'bg-[var(--color-primary-light)] text-[var(--color-primary)] hover:bg-orange-100 focus-visible:ring-[var(--color-primary)]',
-      ghost:     'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] focus-visible:ring-gray-400',
-      danger:    'bg-[var(--color-danger)] text-white hover:bg-red-700 focus-visible:ring-[var(--color-danger)]',
-      outline:   'border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)] focus-visible:ring-gray-400',
+      primary:   'bg-terracota-500 text-white hover:bg-terracota-600 focus-visible:ring-terracota-500',
+      secondary: 'bg-terracota-50 text-terracota-700 hover:bg-terracota-100 focus-visible:ring-terracota-500',
+      ghost:     'bg-transparent text-ink-700 hover:bg-sand-100 focus-visible:ring-sand-300',
+      danger:    'bg-perigo-600 text-white hover:bg-perigo-700 focus-visible:ring-perigo-600',
+      outline:   'border border-sand-200 bg-white text-ink-900 hover:bg-sand-100 focus-visible:ring-sand-300',
     }
 
     const sizes = {

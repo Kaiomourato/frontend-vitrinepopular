@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, MapPin, MessageCircle, ShoppingBag } from 'lucide-react'
+import { ArrowLeft, MapPin, MessageCircle, Search } from 'lucide-react'
 import { lojasService } from '@/services/lojas'
 import { ofertasService } from '@/services/ofertas'
 import { OfertaGrid, OfertaGridSkeleton } from '@/components/ofertas/OfertaGrid'
-import { Button, Spinner, EmptyState, Badge } from '@/components/ui'
+import { Button, EmptyState, Badge } from '@/components/ui'
 import { formatarWhatsApp } from '@/lib/utils'
 import { useState } from 'react'
 
@@ -27,39 +27,36 @@ export function PaginaLoja() {
 
   const whatsappUrl = formatarWhatsApp(loja?.whatsapp ?? null)
 
-  if (loadingLoja) return (
-    <div className="container-app py-20 flex justify-center"><Spinner size={32} /></div>
-  )
+  if (loadingLoja) return <PaginaLojaSkeleton />
 
   if (!loja) return (
-    <div className="container-app py-20 text-center">
-      <p style={{ color: 'var(--color-text-secondary)' }}>Loja não encontrada.</p>
-      <Button variant="outline" className="mt-4" onClick={() => navigate('/')}>Voltar</Button>
+    <div className="container-app py-20">
+      <EmptyState
+        icon={<Search size={28} />}
+        titulo="Essa loja não existe mais"
+        descricao="Pode ter sido removida ou o link estar errado."
+        acao={<Button variant="outline" onClick={() => navigate('/')}>Voltar aos achados</Button>}
+      />
     </div>
   )
 
   return (
     <div className="container-app py-6 flex flex-col gap-6">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm transition-colors hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>
+      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70 text-ink-700">
         <ArrowLeft size={16} /> Voltar
       </button>
 
-      {/* Header da loja */}
-      <div className="rounded-[20px] border p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5"
-        style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-        <div
-          className="w-16 h-16 md:w-20 md:h-20 rounded-[16px] flex items-center justify-center text-2xl font-bold shrink-0"
-          style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)' }}
-        >
+      <div className="rounded-xl border border-sand-200 bg-white p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5">
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0 bg-terracota-50 text-terracota-700">
           {loja.nome[0].toUpperCase()}
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{loja.nome}</h1>
+            <h1 className="font-display text-display-sm font-semibold text-ink-900">{loja.nome}</h1>
             {loja.isParceira && <Badge variant="primary">Parceira</Badge>}
           </div>
           {loja.endereco && (
-            <p className="flex items-center gap-1.5 text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="flex items-center gap-1.5 text-sm mt-1 text-ink-700">
               <MapPin size={14} /> {loja.endereco}
             </p>
           )}
@@ -69,26 +66,24 @@ export function PaginaLoja() {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-[10px] font-medium text-sm shrink-0"
-            style={{ background: '#25D366', color: '#fff' }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm shrink-0 text-white bg-whatsapp transition-opacity hover:opacity-90"
           >
             <MessageCircle size={16} /> WhatsApp
           </a>
         )}
       </div>
 
-      {/* Ofertas da loja */}
       <div>
-        <h2 className="font-semibold text-lg mb-4" style={{ color: 'var(--color-text-primary)' }}>
-          Ofertas ativas
+        <h2 className="font-display text-display-sm font-semibold mb-4 text-ink-900">
+          Achados dessa loja
         </h2>
         {loadingOfertas ? (
           <OfertaGridSkeleton quantidade={8} />
         ) : !ofertas?.content?.length ? (
           <EmptyState
-            icon={<ShoppingBag size={24} />}
-            titulo="Nenhuma oferta ativa"
-            descricao="Esta loja ainda não publicou ofertas."
+            icon={<Search size={24} />}
+            titulo="Nenhum achado por aqui ainda"
+            descricao="Esta loja ainda não publicou nada."
           />
         ) : (
           <>
@@ -96,12 +91,27 @@ export function PaginaLoja() {
             {ofertas.page.totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 pt-6">
                 <Button variant="outline" size="sm" disabled={ofertas.page.number === 0} onClick={() => setPagina(p => p - 1)}>Anterior</Button>
-                <span className="text-sm px-3" style={{ color: 'var(--color-text-secondary)' }}>{ofertas.page.number + 1} / {ofertas.page.totalPages}</span>
+                <span className="text-sm px-3 text-ink-700">{ofertas.page.number + 1} / {ofertas.page.totalPages}</span>
                 <Button variant="outline" size="sm" disabled={ofertas.page.number + 1 >= ofertas.page.totalPages} onClick={() => setPagina(p => p + 1)}>Próxima</Button>
               </div>
             )}
           </>
         )}
+      </div>
+    </div>
+  )
+}
+
+function PaginaLojaSkeleton() {
+  return (
+    <div className="container-app py-6 flex flex-col gap-6 animate-pulse">
+      <div className="h-4 w-16 rounded bg-sand-100" />
+      <div className="rounded-xl h-32 md:h-28 bg-sand-100" />
+      <div className="h-6 w-40 rounded bg-sand-100" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="aspect-square rounded-lg bg-sand-100" />
+        ))}
       </div>
     </div>
   )

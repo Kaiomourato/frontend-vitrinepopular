@@ -1,11 +1,11 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { ArrowLeft, MapPin, MessageCircle, Clock, Tag, ThumbsUp, ThumbsDown, Share2, Heart } from 'lucide-react'
+import { ArrowLeft, MapPin, MessageCircle, Clock, Tag, ThumbsUp, ThumbsDown, Share2, Heart, Search } from 'lucide-react'
 import { ofertasService } from '@/services/ofertas'
 import { useAuthStore } from '@/store/authStore'
 import { useFavoritos, useToggleFavorito } from '@/hooks/useFavoritos'
-import { Button, Badge, Spinner } from '@/components/ui'
+import { Button, Badge, EmptyState } from '@/components/ui'
 import { formatarPreco, formatarDataRelativa, formatarWhatsApp } from '@/lib/utils'
 import { compartilharOferta } from '@/lib/compartilhar'
 import { useState } from 'react'
@@ -66,14 +66,16 @@ export function DetalheOferta() {
     if (oferta) compartilharOferta(oferta)
   }
 
-  if (isLoading) return (
-    <div className="container-app py-20 flex justify-center"><Spinner size={32} /></div>
-  )
+  if (isLoading) return <DetalheOfertaSkeleton />
 
   if (isError || !oferta) return (
-    <div className="container-app py-20 text-center">
-      <p style={{ color: 'var(--color-text-secondary)' }}>Oferta não encontrada.</p>
-      <Button variant="outline" className="mt-4" onClick={() => navigate('/')}>Voltar ao feed</Button>
+    <div className="container-app py-20">
+      <EmptyState
+        icon={<Search size={28} />}
+        titulo="Esse achado não existe mais"
+        descricao="Pode ter sido removido ou o link estar errado."
+        acao={<Button variant="outline" onClick={() => navigate('/')}>Voltar aos achados</Button>}
+      />
     </div>
   )
 
@@ -83,19 +85,18 @@ export function DetalheOferta() {
     <div className="container-app py-6">
       <button
         onClick={() => navigate(-1)}
-        className="flex items-center gap-1.5 text-sm mb-6 transition-colors hover:opacity-70"
-        style={{ color: 'var(--color-text-secondary)' }}
+        className="flex items-center gap-1.5 text-sm mb-6 transition-opacity hover:opacity-70 text-ink-700"
       >
         <ArrowLeft size={16} /> Voltar
       </button>
 
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-        {/* Imagem */}
-        <div className="rounded-[20px] overflow-hidden aspect-square border" style={{ borderColor: 'var(--color-border)' }}>
-          <img src={oferta.imagemUrl} alt={oferta.produtoNome} className="w-full h-full object-cover" />
+        <div className="rounded-xl overflow-hidden aspect-square border border-sand-200 bg-mel-50">
+          {oferta.imagemUrl && (
+            <img src={oferta.imagemUrl} alt={oferta.produtoNome} className="w-full h-full object-cover" />
+          )}
         </div>
 
-        {/* Detalhes */}
         <div className="flex flex-col gap-5">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 flex-wrap">
@@ -108,72 +109,67 @@ export function DetalheOferta() {
               <button
                 onClick={handleFavoritar}
                 disabled={toggleFavorito.isPending}
-                className="w-9 h-9 rounded-full flex items-center justify-center border shrink-0 transition-all"
-                style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface)' }}
-                title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                className="w-9 h-9 rounded-full flex items-center justify-center border border-sand-200 bg-white shrink-0 transition-transform active:scale-90"
+                title={favoritado ? 'Remover dos salvos' : 'Salvar'}
               >
                 <Heart
                   size={16}
-                  fill={favoritado ? 'var(--color-danger)' : 'none'}
-                  stroke={favoritado ? 'var(--color-danger)' : 'var(--color-text-secondary)'}
+                  className={favoritado ? 'motion-safe:animate-pulsar' : ''}
+                  fill={favoritado ? 'var(--color-perigo-600)' : 'none'}
+                  stroke={favoritado ? 'var(--color-perigo-600)' : 'var(--color-ink-700)'}
                 />
               </button>
             )}
           </div>
 
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold leading-tight" style={{ color: 'var(--color-text-primary)' }}>
+            <h1 className="font-display text-display-md font-semibold leading-tight text-ink-900">
               {oferta.produtoNome}
             </h1>
             {oferta.descricao && (
-              <p className="mt-3 text-base leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="mt-3 text-base leading-relaxed text-ink-700">
                 {oferta.descricao}
               </p>
             )}
           </div>
 
-          <p className="text-4xl font-bold" style={{ color: 'var(--color-primary)' }}>
+          <p className="font-display text-display-lg font-semibold text-terracota-700">
             {formatarPreco(oferta.preco)}
           </p>
 
-          {/* Info loja */}
           <Link
             to={`/loja/${oferta.loja.id}`}
-            className="flex flex-col gap-1 p-4 rounded-[12px] border transition-all hover:border-[var(--color-primary)]"
-            style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg)' }}
+            className="flex flex-col gap-1 p-4 rounded-lg border border-sand-200 bg-cream-50 transition-colors hover:border-terracota-500"
           >
-            <span className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>Vendido por</span>
-            <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{oferta.loja.nome}</span>
+            <span className="text-xs font-medium text-ink-500">Vendido por</span>
+            <span className="font-semibold text-ink-900">{oferta.loja.nome}</span>
             {oferta.loja.endereco && (
-              <span className="flex items-center gap-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <span className="flex items-center gap-1 text-sm text-ink-700">
                 <MapPin size={13} /> {oferta.loja.endereco}
               </span>
             )}
           </Link>
 
-          {/* Meta */}
-          <div className="flex items-center gap-3 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            <span className="flex items-center gap-1"><Clock size={13} /> {formatarDataRelativa(oferta.dataPostagem)}</span>
+          <div className="flex items-center gap-3 text-sm text-ink-500">
+            <span className="flex items-center gap-1"><Clock size={13} /> Visto {formatarDataRelativa(oferta.dataPostagem)}</span>
             <span className="flex items-center gap-1"><Tag size={13} /> {oferta.categoria.nome}</span>
           </div>
 
-          {/* Ações */}
           <div className="flex flex-col gap-2 pt-2">
             {whatsappUrl && (
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 h-12 rounded-[10px] font-medium text-base transition-all hover:opacity-90"
-                style={{ background: '#25D366', color: '#fff' }}
+                className="flex items-center justify-center gap-2 h-12 rounded-lg font-medium text-base text-white bg-whatsapp transition-opacity hover:opacity-90"
               >
                 <MessageCircle size={20} />
                 Falar no WhatsApp
               </a>
             )}
             <div>
-              <p className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-muted)' }}>
-                Essa oferta ainda está disponível?
+              <p className="text-xs font-medium mb-2 text-ink-500">
+                Esse achado ainda está disponível?
               </p>
               <div className="flex gap-2">
                 <Button
@@ -202,6 +198,30 @@ export function DetalheOferta() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DetalheOfertaSkeleton() {
+  return (
+    <div className="container-app py-6 animate-pulse">
+      <div className="h-4 w-16 rounded mb-6 bg-sand-100" />
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="rounded-xl aspect-square bg-sand-100" />
+        <div className="flex flex-col gap-5">
+          <div className="flex gap-2">
+            <div className="h-6 w-20 rounded-full bg-sand-100" />
+            <div className="h-6 w-24 rounded-full bg-sand-100" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="h-7 w-3/4 rounded bg-sand-100" />
+            <div className="h-4 w-full rounded bg-sand-100" />
+          </div>
+          <div className="h-9 w-40 rounded bg-sand-100" />
+          <div className="h-20 rounded-lg bg-sand-100" />
+          <div className="h-12 rounded-lg bg-sand-100" />
         </div>
       </div>
     </div>
