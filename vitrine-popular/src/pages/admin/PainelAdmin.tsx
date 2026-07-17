@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trash2, Edit, ShieldAlert, Store, ShoppingBag } from 'lucide-react'
 import { adminService } from '@/services/admin'
 import { lojasService } from '@/services/lojas'
-import { Button, Badge, Select, Spinner, EmptyState, dispararToast } from '@/components/ui'
+import { Button, Badge, Select, EmptyState, dispararToast } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
 import { formatarPreco, formatarDataRelativa, extrairErroApi } from '@/lib/utils'
 import type { StatusOferta } from '@/types'
@@ -23,6 +23,16 @@ interface EditLojaForm {
   nome: string
   endereco: string
   whatsapp: string
+}
+
+function ListaSkeleton({ quantidade = 4 }: { quantidade?: number }) {
+  return (
+    <div className="flex flex-col gap-2 animate-pulse">
+      {Array.from({ length: quantidade }).map((_, i) => (
+        <div key={i} className="h-16 rounded-xl bg-sand-100" />
+      ))}
+    </div>
+  )
 }
 
 export function PainelAdmin() {
@@ -95,14 +105,14 @@ export function PainelAdmin() {
   return (
     <div className="container-app py-6 flex flex-col gap-10">
       <div className="flex items-center gap-2">
-        <ShieldAlert size={24} style={{ color: 'var(--color-primary)' }} />
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Painel administrativo</h1>
+        <ShieldAlert size={24} className="text-terracota-600" />
+        <h1 className="font-display text-display-md font-semibold text-ink-900">Painel administrativo</h1>
       </div>
 
       {/* ── Ofertas ── */}
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <h2 className="font-semibold text-lg flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+          <h2 className="font-semibold text-lg flex items-center gap-2 text-ink-900">
             <ShoppingBag size={18} /> Ofertas
           </h2>
           <div className="w-44">
@@ -119,30 +129,27 @@ export function PainelAdmin() {
         </div>
 
         {loadingOfertas ? (
-          <div className="flex justify-center py-10"><Spinner size={26} /></div>
+          <ListaSkeleton />
         ) : !ofertas.length ? (
           <EmptyState icon={<ShoppingBag size={22} />} titulo="Nenhuma oferta encontrada" />
         ) : (
           <div className="flex flex-col gap-2">
             {ofertas.map(oferta => (
-              <div
-                key={oferta.id}
-                className="flex items-center gap-3 p-3 rounded-[12px] border"
-                style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
-              >
-                <img
-                  src={oferta.imagemUrl}
-                  alt={oferta.produtoNome}
-                  className="w-12 h-12 rounded-[10px] object-cover shrink-0 border"
-                  style={{ borderColor: 'var(--color-border)' }}
-                />
+              <div key={oferta.id} className="flex items-center gap-3 p-3 rounded-xl border border-sand-200 bg-white">
+                {oferta.imagemUrl && (
+                  <img
+                    src={oferta.imagemUrl}
+                    alt={oferta.produtoNome}
+                    className="w-12 h-12 rounded-lg object-cover shrink-0 border border-sand-200"
+                  />
+                )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>{oferta.produtoNome}</p>
+                  <p className="font-medium text-sm truncate text-ink-900">{oferta.produtoNome}</p>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                    <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{oferta.loja.nome}</span>
-                    <span className="text-xs font-semibold" style={{ color: 'var(--color-primary)' }}>{formatarPreco(oferta.preco)}</span>
+                    <span className="text-xs text-ink-700">{oferta.loja.nome}</span>
+                    <span className="text-xs font-semibold text-terracota-700">{formatarPreco(oferta.preco)}</span>
                     <Badge variant={STATUS_VARIANT[oferta.status]}>{STATUS_LABEL[oferta.status]}</Badge>
-                    <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{formatarDataRelativa(oferta.dataPostagem)}</span>
+                    <span className="text-xs text-ink-500">{formatarDataRelativa(oferta.dataPostagem)}</span>
                   </div>
                 </div>
                 {confirmandoOfertaId === oferta.id ? (
@@ -154,7 +161,7 @@ export function PainelAdmin() {
                   </div>
                 ) : (
                   <Button variant="ghost" size="sm" onClick={() => setConfirmandoOfertaId(oferta.id)}>
-                    <Trash2 size={15} style={{ color: 'var(--color-danger)' }} />
+                    <Trash2 size={15} className="text-perigo-600" />
                   </Button>
                 )}
               </div>
@@ -165,22 +172,18 @@ export function PainelAdmin() {
 
       {/* ── Lojas ── */}
       <section className="flex flex-col gap-4">
-        <h2 className="font-semibold text-lg flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+        <h2 className="font-semibold text-lg flex items-center gap-2 text-ink-900">
           <Store size={18} /> Lojas
         </h2>
 
         {loadingLojas ? (
-          <div className="flex justify-center py-10"><Spinner size={26} /></div>
+          <ListaSkeleton />
         ) : !lojas.length ? (
           <EmptyState icon={<Store size={22} />} titulo="Nenhuma loja cadastrada" />
         ) : (
           <div className="flex flex-col gap-2">
             {lojas.map(loja => (
-              <div
-                key={loja.id}
-                className="flex flex-col gap-3 p-3 rounded-[12px] border"
-                style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
-              >
+              <div key={loja.id} className="flex flex-col gap-3 p-3 rounded-xl border border-sand-200 bg-white">
                 {editandoLojaId === loja.id ? (
                   <div className="flex flex-col gap-3">
                     <div className="grid sm:grid-cols-3 gap-3">
@@ -197,10 +200,10 @@ export function PainelAdmin() {
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{loja.nome}</p>
+                        <p className="font-medium text-sm text-ink-900">{loja.nome}</p>
                         {loja.isParceira && <Badge variant="primary">Parceira</Badge>}
                       </div>
-                      <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                      <p className="text-xs mt-0.5 text-ink-700">
                         {loja.endereco ?? 'Sem endereço'} {loja.whatsapp ? `• ${loja.whatsapp}` : ''}
                       </p>
                     </div>
@@ -210,7 +213,7 @@ export function PainelAdmin() {
                       </Button>
                       {confirmandoLojaId === loja.id ? (
                         <div className="flex flex-col gap-2 items-end">
-                          <p className="text-xs max-w-xs text-right" style={{ color: 'var(--color-danger)' }}>
+                          <p className="text-xs max-w-xs text-right text-perigo-600">
                             Remover esta loja apaga também suas ofertas, favoritos e votos vinculados, e desvincula os lojistas. Confirma?
                           </p>
                           <div className="flex gap-1">
@@ -222,7 +225,7 @@ export function PainelAdmin() {
                         </div>
                       ) : (
                         <Button variant="ghost" size="sm" onClick={() => setConfirmandoLojaId(loja.id)}>
-                          <Trash2 size={15} style={{ color: 'var(--color-danger)' }} />
+                          <Trash2 size={15} className="text-perigo-600" />
                         </Button>
                       )}
                     </div>
