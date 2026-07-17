@@ -9,9 +9,9 @@ export function Favoritos() {
   return (
     <div className="container-app py-6 flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Meus favoritos</h1>
-        <p className="text-sm mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-          Ofertas que você salvou para acompanhar
+        <h1 className="font-display text-display-md font-semibold text-ink-900">Meus favoritos</h1>
+        <p className="text-sm mt-0.5 text-ink-700">
+          Achados que você salvou para acompanhar
         </p>
       </div>
 
@@ -21,7 +21,7 @@ export function Favoritos() {
         <EmptyState
           icon={<Heart size={24} />}
           titulo="Nenhum favorito ainda"
-          descricao="Toque no coração de uma oferta para salvá-la aqui."
+          descricao="Toque no coração de um achado para salvá-lo aqui."
         />
       ) : (
         <OfertaGrid ofertas={favoritos} />

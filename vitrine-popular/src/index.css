@@ -132,6 +132,7 @@
      atrás de motion-safe: nos componentes que as usam */
   --animate-surgir: surgir 0.4s ease-out backwards;
   --animate-pulsar: pulsar 0.35s ease-out;
+  --animate-toast-in: toast-in 0.25s ease-out;
 }
 
 @keyframes surgir {
@@ -143,6 +144,11 @@
   0%   { transform: scale(1); }
   45%  { transform: scale(1.35); }
   100% { transform: scale(1); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ============================================================

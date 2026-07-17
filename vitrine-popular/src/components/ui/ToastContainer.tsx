@@ -24,9 +24,9 @@ export function ToastContainer() {
   }, [])
 
   const cores: Record<ToastType, string> = {
-    success: 'border-l-4 border-[var(--color-success)] bg-[var(--color-success-light)] text-[var(--color-success)]',
-    error:   'border-l-4 border-[var(--color-danger)] bg-[var(--color-danger-light)] text-[var(--color-danger)]',
-    info:    'border-l-4 border-[var(--color-primary)] bg-[var(--color-primary-light)] text-[var(--color-primary)]',
+    success: 'border-l-4 border-mandacaru-600 bg-mandacaru-50 text-mandacaru-700',
+    error:   'border-l-4 border-perigo-600 bg-perigo-50 text-perigo-700',
+    info:    'border-l-4 border-terracota-500 bg-terracota-50 text-terracota-700',
   }
 
   if (!toasts.length) return null
@@ -37,7 +37,7 @@ export function ToastContainer() {
         <div
           key={t.id}
           className={cn(
-            'px-4 py-3 rounded-[10px] shadow-lg text-sm font-medium animate-in slide-in-from-right-4 fade-in',
+            'px-4 py-3 rounded-lg shadow-lg text-sm font-medium motion-safe:animate-toast-in',
             cores[t.tipo]
           )}
         >

@@ -12,6 +12,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: null,
       manifest: {
+        id: '/',
         name: 'Vitrine Popular',
         short_name: 'Vitrine',
         description: 'Vitrine de ofertas do comércio popular de Picos-PI',
@@ -20,10 +21,16 @@ export default defineConfig({
         display: 'standalone',
         start_url: '/',
         lang: 'pt-BR',
+        categories: ['shopping', 'lifestyle'],
         icons: [
           { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
           { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
           { src: '/pwa-512x512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+        shortcuts: [
+          { name: 'Descobrir', url: '/descobrir', icons: [{ src: '/pwa-192x192.png', sizes: '192x192' }] },
+          { name: 'Buscar', url: '/busca', icons: [{ src: '/pwa-192x192.png', sizes: '192x192' }] },
+          { name: 'Favoritos', url: '/favoritos', icons: [{ src: '/pwa-192x192.png', sizes: '192x192' }] },
         ],
       },
       workbox: {
