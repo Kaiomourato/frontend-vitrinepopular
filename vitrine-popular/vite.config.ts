@@ -15,8 +15,8 @@ export default defineConfig({
         name: 'Vitrine Popular',
         short_name: 'Vitrine',
         description: 'Vitrine de ofertas do comércio popular de Picos-PI',
-        theme_color: '#E8400A',
-        background_color: '#ffffff',
+        theme_color: '#B14F26',
+        background_color: '#FBF9F5',
         display: 'standalone',
         start_url: '/',
         lang: 'pt-BR',
@@ -27,6 +27,10 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Inclui .woff2 no precache — as fontes self-hospedadas (Fraunces/Plus
+        // Jakarta Sans variable) viram assets do build e precisam ficar
+        // disponíveis offline como qualquer outro asset estático.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
         runtimeCaching: [
           // Assets estáticos do próprio build (JS/CSS gerados pelo Vite)
           {

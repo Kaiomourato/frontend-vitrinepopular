@@ -1,51 +1,158 @@
 @import "tailwindcss";
 
+/* Fontes self-hospedadas (variable fonts — 1 arquivo cobre todos os pesos usados) */
+@import "@fontsource-variable/fraunces/standard.css"; /* eixo opsz+wght, sem soft/wonk — mais leve */
+@import "@fontsource-variable/plus-jakarta-sans";
+
 /* ============================================================
-   Tokens de design — Vitrine Popular
-   Cores inspiradas em feiras populares: vibrante mas organizado
+   Design tokens — Vitrine Popular
+   Paleta editorial com identidade sutil de Picos-PI: terracota,
+   laranja queimado, amarelo mel e verde mandacaru sobre neutros
+   quentes. Todos os pares texto/fundo abaixo foram calculados
+   para contraste AA (≥4.5:1 texto normal, ≥3:1 texto grande) —
+   reconfirmar com devtools ao usar uma combinação nova.
+   ============================================================ */
+@theme {
+  /* Terracota — marca, CTA primário, preço em destaque */
+  --color-terracota-50:  #FBEDE7;
+  --color-terracota-100: #F5D8C9;
+  --color-terracota-200: #E9B594;
+  --color-terracota-300: #DB8F62;
+  --color-terracota-400: #C96B3E;
+  --color-terracota-500: #B14F26; /* base — fundo de botão primário (com texto branco) */
+  --color-terracota-600: #9A3E1C; /* hover */
+  --color-terracota-700: #7E3117; /* texto sobre branco/creme — preço, links */
+  --color-terracota-800: #642712;
+  --color-terracota-900: #4D1E0E;
+
+  /* Laranja queimado — acentos secundários, chips ativos, hover de destaque */
+  --color-queimado-50:  #FFF1E6;
+  --color-queimado-100: #FFDEC2;
+  --color-queimado-200: #FFBD8A;
+  --color-queimado-300: #FF9A52;
+  --color-queimado-400: #F27C2E;
+  --color-queimado-500: #DD611A;
+  --color-queimado-600: #B84E14;
+  --color-queimado-700: #933D10;
+  --color-queimado-800: #6F2E0C;
+  --color-queimado-900: #4C1F08;
+
+  /* Amarelo mel — placeholder em favo, selos de novidade */
+  --color-mel-50:  #FFF8E1;
+  --color-mel-100: #FFECB3;
+  --color-mel-200: #FFDE80;
+  --color-mel-300: #FFCF4D;
+  --color-mel-400: #F7BB2A;
+  --color-mel-500: #E0A310;
+  --color-mel-600: #BD8709;
+  --color-mel-700: #966B08;
+  --color-mel-800: #714F06; /* texto de aviso sobre claro — ~7.4:1 */
+  --color-mel-900: #4D3504;
+
+  /* Verde mandacaru — disponibilidade, sucesso */
+  --color-mandacaru-50:  #EFF6EA;
+  --color-mandacaru-100: #D9EBCB;
+  --color-mandacaru-200: #B3D89C;
+  --color-mandacaru-300: #8AC26C;
+  --color-mandacaru-400: #66A847;
+  --color-mandacaru-500: #4C8A32;
+  --color-mandacaru-600: #3B6E27; /* texto/ícone de sucesso sobre claro — ~6.1:1 */
+  --color-mandacaru-700: #2E551E;
+  --color-mandacaru-800: #223F16;
+  --color-mandacaru-900: #172B0F;
+
+  /* Vermelho-tijolo — erro/perigo (distinto do terracota de marca) */
+  --color-perigo-50:  #FCEDEC;
+  --color-perigo-500: #C6362D;
+  --color-perigo-600: #B3261E; /* ~6.5:1 sobre branco */
+  --color-perigo-700: #8C1E17;
+
+  /* Neutros quentes */
+  --color-cream-50:  #FBF9F5; /* fundo de página */
+  --color-sand-100:  #F2EEE6; /* hover de superfície */
+  --color-sand-200:  #E7E1D5; /* borda */
+  --color-sand-300:  #D6CCB8; /* borda forte */
+  --color-ink-900:   #241C15; /* texto primário */
+  --color-ink-700:   #5B5147; /* texto secundário — ~7.7:1 */
+  --color-ink-500:   #79705F; /* texto muted — ~4.9:1, mínimo AA */
+
+  /* Marca externa (WhatsApp) — mantido fora das rampas editoriais de propósito */
+  --color-whatsapp:       #25D366;
+  --color-whatsapp-hover: #1DA851;
+
+  /* --- Aliases legados ---------------------------------------------------
+     Mantidos por compatibilidade enquanto cada tela é migrada (fases 2–10
+     do redesign). Novo código deve preferir os tokens nomeados acima
+     (bg-terracota-500, text-ink-700 etc.); estes aliases serão removidos
+     depois que nenhum componente mais os referenciar. */
+  --color-primary:        var(--color-terracota-500);
+  --color-primary-hover:  var(--color-terracota-600);
+  --color-primary-light:  var(--color-terracota-50);
+  --color-bg:             var(--color-cream-50);
+  --color-surface:        #FFFFFF;
+  --color-surface-hover:  var(--color-sand-100);
+  --color-border:         var(--color-sand-200);
+  --color-border-strong:  var(--color-sand-300);
+  --color-text-primary:   var(--color-ink-900);
+  --color-text-secondary: var(--color-ink-700);
+  --color-text-muted:     var(--color-ink-500);
+  --color-success:        var(--color-mandacaru-600);
+  --color-success-light:  var(--color-mandacaru-50);
+  --color-warning:        var(--color-mel-800);
+  --color-warning-light:  var(--color-mel-50);
+  --color-danger:         var(--color-perigo-600);
+  --color-danger-light:   var(--color-perigo-50);
+
+  /* Tipografia — display editorial (Fraunces) + corpo neutro (Plus Jakarta Sans) */
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-sans:    'Plus Jakarta Sans Variable', system-ui, -apple-system, sans-serif;
+  --font-mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Escala de tamanhos editoriais (fluida) — para títulos/preços de destaque */
+  --text-display-sm: 1.375rem;
+  --text-display-sm--line-height: 1.3;
+  --text-display-md: clamp(1.625rem, 4vw, 2.25rem);
+  --text-display-md--line-height: 1.15;
+  --text-display-lg: clamp(1.875rem, 5vw, 3rem);
+  --text-display-lg--line-height: 1.1;
+
+  /* Raios de borda */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* Sombras com tom quente (em vez de preto puro) */
+  --shadow-sm: 0 1px 2px 0 rgb(90 46 20 / 0.06);
+  --shadow-md: 0 4px 10px -2px rgb(90 46 20 / 0.10), 0 2px 4px -2px rgb(90 46 20 / 0.06);
+  --shadow-lg: 0 12px 24px -6px rgb(90 46 20 / 0.14), 0 4px 8px -4px rgb(90 46 20 / 0.08);
+}
+
+/* ============================================================
+   Modo escuro — opcional/barato: só sobrescreve os tokens de
+   superfície/texto/tinta, mantendo as rampas de cor intactas.
+   Botões com bg-terracota-500/600 + texto branco continuam
+   legíveis nos dois temas; texto corrido direto sobre o fundo
+   deve preferir os aliases (--color-text-*) que são
+   sobrescritos aqui, não as rampas cruas.
    ============================================================ */
 @layer base {
-  :root {
-    /* Paleta principal */
-    --color-primary:       #E8400A; /* laranja-vermelho vibrante — cor da marca */
-    --color-primary-hover: #C93408;
-    --color-primary-light: #FEF0EC;
-
-    /* Superfícies */
-    --color-bg:            #F8F7F4; /* off-white levemente quente */
-    --color-surface:       #FFFFFF;
-    --color-surface-hover: #F3F2EF;
-    --color-border:        #E5E3DE;
-    --color-border-strong: #C8C6C0;
-
-    /* Texto */
-    --color-text-primary:   #1A1A18;
-    --color-text-secondary: #6B6963;
-    --color-text-muted:     #A09D97;
-
-    /* Semânticas */
-    --color-success:        #16A34A;
-    --color-success-light:  #F0FDF4;
-    --color-warning:        #D97706;
-    --color-warning-light:  #FFFBEB;
-    --color-danger:         #DC2626;
-    --color-danger-light:   #FEF2F2;
-
-    /* Tipografia */
-    --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-
-    /* Raios de borda */
-    --radius-sm:  6px;
-    --radius-md:  10px;
-    --radius-lg:  14px;
-    --radius-xl:  20px;
-    --radius-full: 9999px;
-
-    /* Sombras */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg:             #1C1712;
+      --color-surface:        #262019;
+      --color-surface-hover:  #2F2820;
+      --color-border:         #3B3226;
+      --color-border-strong:  #4A3F30;
+      --color-text-primary:   #F5F0E8;
+      --color-text-secondary: #C9BFAF;
+      --color-text-muted:     #948970;
+      --color-primary-light:  #3A2415;
+      --color-success-light:  #16260F;
+      --color-warning-light:  #2E2409;
+      --color-danger-light:   #2B1210;
+    }
   }
 
   /* Reset base */
