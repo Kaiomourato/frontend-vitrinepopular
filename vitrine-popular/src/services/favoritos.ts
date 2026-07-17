@@ -12,4 +12,9 @@ export const favoritosService = {
   // Retorna a lista de ofertas favoritas do usuário logado (sem flag por oferta)
   listar: () =>
     api.get<OfertaResponse[]>('/api/favoritos').then(r => r.data),
+
+  // TODO: a API não expõe uma contagem agregada de favoritos por oferta
+  // (nem em OfertaResponse, nem aqui). O OfertaCard não mostra "N
+  // interessados" por isso — não fabricar esse número no front. Se o
+  // back-end passar a expor esse campo, plugar aqui.
 }

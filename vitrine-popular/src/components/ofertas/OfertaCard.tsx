@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { MapPin, ThumbsDown, Clock, Heart } from 'lucide-react'
-import { formatarPreco, formatarDataRelativa } from '@/lib/utils'
+import { MapPin, ThumbsDown, Clock, Heart, Share2, Hexagon } from 'lucide-react'
+import { cn, formatarPreco, formatarDataRelativa } from '@/lib/utils'
+import { compartilharOferta } from '@/lib/compartilhar'
 import { ofertasService } from '@/services/ofertas'
 import { useAuthStore } from '@/store/authStore'
 import { useFavoritos, useToggleFavorito } from '@/hooks/useFavoritos'
@@ -12,9 +13,11 @@ import type { OfertaResponse } from '@/types'
 interface OfertaCardProps {
   oferta: OfertaResponse
   onVotoAcabou?: () => void
+  /** Posição na lista — só para escalonar a animação de entrada (capada). */
+  index?: number
 }
 
-export function OfertaCard({ oferta, onVotoAcabou }: OfertaCardProps) {
+export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps) {
   const navigate = useNavigate()
   const isAutenticado = useAuthStore(s => s.isAutenticado)
   const { idsFavoritos } = useFavoritos()
@@ -22,10 +25,16 @@ export function OfertaCard({ oferta, onVotoAcabou }: OfertaCardProps) {
   const favoritado = idsFavoritos.has(oferta.id)
   const [votando, setVotando] = useState(false)
   const [votou, setVotou] = useState(false)
+  const [imgErro, setImgErro] = useState(false)
 
   function handleFavoritar(e: React.MouseEvent) {
     e.stopPropagation()
     toggleFavorito.mutate({ oferta, favoritado })
+  }
+
+  function handleCompartilhar(e: React.MouseEvent) {
+    e.stopPropagation()
+    compartilharOferta(oferta)
   }
 
   async function handleVotarAcabou(e: React.MouseEvent) {
@@ -54,38 +63,45 @@ export function OfertaCard({ oferta, onVotoAcabou }: OfertaCardProps) {
   return (
     <article
       onClick={() => navigate(`/oferta/${oferta.id}`)}
-      className="group cursor-pointer rounded-[14px] border overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5"
-      style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
+      style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
+      className="group cursor-pointer rounded-lg border border-sand-200 bg-white overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 motion-safe:animate-surgir"
     >
-      {/* Imagem */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
-        <img
-          src={oferta.imagemUrl}
-          alt={oferta.produtoNome}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Badge categoria */}
+      {/* Imagem — proporção fixa para domar fotos de qualidade variável */}
+      <div className="relative aspect-square overflow-hidden bg-mel-50">
+        {oferta.imagemUrl && !imgErro ? (
+          <img
+            src={oferta.imagemUrl}
+            alt={oferta.produtoNome}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgErro(true)}
+          />
+        ) : (
+          <PlaceholderFavo />
+        )}
+
         <div className="absolute top-2 left-2">
-          <span
-            className="text-xs font-medium px-2 py-0.5 rounded-full"
-            style={{ background: 'rgba(0,0,0,0.55)', color: '#fff', backdropFilter: 'blur(4px)' }}
-          >
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full text-white backdrop-blur-sm bg-ink-900/55">
             {oferta.categoria.nome}
           </span>
         </div>
-        {/* Badge oficial + favorito */}
+
         <div className="absolute top-2 right-2 flex items-center gap-1.5">
           {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
           {isAutenticado && (
             <button
               onClick={handleFavoritar}
               disabled={toggleFavorito.isPending}
-              className="w-7 h-7 rounded-full flex items-center justify-center transition-all"
-              style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}
-              title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              className="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm bg-ink-900/45 transition-transform active:scale-90"
+              title={favoritado ? 'Remover dos salvos' : 'Salvar'}
             >
-              <Heart size={14} fill={favoritado ? '#fff' : 'none'} stroke="#fff" />
+              <Heart
+                size={15}
+                fill={favoritado ? '#fff' : 'none'}
+                stroke="#fff"
+                className={favoritado ? 'motion-safe:animate-pulsar' : ''}
+              />
             </button>
           )}
         </div>
@@ -94,26 +110,24 @@ export function OfertaCard({ oferta, onVotoAcabou }: OfertaCardProps) {
       {/* Conteúdo */}
       <div className="p-3 flex flex-col gap-2">
         <div>
-          <p className="font-semibold text-sm leading-tight line-clamp-2" style={{ color: 'var(--color-text-primary)' }}>
+          <p className="font-semibold text-sm leading-tight line-clamp-2 text-ink-900">
             {oferta.produtoNome}
           </p>
           {oferta.descricao && (
-            <p className="text-xs mt-0.5 line-clamp-1" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="text-xs mt-0.5 line-clamp-1 text-ink-500">
               {oferta.descricao}
             </p>
           )}
         </div>
 
-        {/* Preço */}
-        <p className="text-lg font-bold" style={{ color: 'var(--color-primary)' }}>
+        {/* Preço em destaque — tipografia editorial */}
+        <p className="font-display text-display-sm font-semibold text-terracota-700">
           {formatarPreco(oferta.preco)}
         </p>
 
-        {/* Loja */}
         <button
           onClick={e => { e.stopPropagation(); navigate(`/loja/${oferta.loja.id}`) }}
-          className="flex items-center gap-1 text-xs transition-colors hover:underline text-left"
-          style={{ color: 'var(--color-text-secondary)' }}
+          className="flex items-center gap-1 text-xs transition-colors hover:underline text-left text-ink-700"
         >
           <MapPin size={11} className="shrink-0" />
           <span className="truncate">{oferta.loja.nome}</span>
@@ -122,27 +136,60 @@ export function OfertaCard({ oferta, onVotoAcabou }: OfertaCardProps) {
           )}
         </button>
 
-        {/* Rodapé */}
-        <div className="flex items-center justify-between pt-1 border-t" style={{ borderColor: 'var(--color-border)' }}>
-          <span className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        {/* Rodapé: frescor do dado + ações */}
+        <div className="flex items-center justify-between gap-1 pt-1 border-t border-sand-200">
+          <span className="flex items-center gap-1 text-xs text-ink-500">
             <Clock size={11} />
-            {formatarDataRelativa(oferta.dataPostagem)}
+            Visto {formatarDataRelativa(oferta.dataPostagem)}
           </span>
-          <button
-            onClick={handleVotarAcabou}
-            disabled={votou || votando}
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded-full transition-all disabled:cursor-not-allowed"
-            style={{
-              color: votou ? 'var(--color-danger)' : 'var(--color-text-muted)',
-              background: votou ? 'var(--color-danger-light)' : 'transparent',
-            }}
-            title="Votar que o produto acabou"
-          >
-            <ThumbsDown size={12} />
-            <span>Acabou {oferta.votosAcabou > 0 ? `(${oferta.votosAcabou})` : ''}</span>
-          </button>
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={handleCompartilhar}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-ink-500 transition-colors hover:bg-sand-100 hover:text-ink-700"
+              title="Compartilhar"
+            >
+              <Share2 size={13} />
+            </button>
+            <button
+              onClick={handleVotarAcabou}
+              disabled={votou || votando}
+              className={cn(
+                'flex items-center gap-1 text-xs px-2 py-1 rounded-full transition-colors disabled:cursor-not-allowed',
+                votou ? 'text-perigo-600 bg-perigo-50' : 'text-ink-500 hover:bg-sand-100'
+              )}
+              title="Sinalizar que acabou"
+            >
+              <ThumbsDown size={12} />
+              {oferta.votosAcabou > 0 && <span>{oferta.votosAcabou}</span>}
+            </button>
+          </div>
         </div>
       </div>
     </article>
+  )
+}
+
+/**
+ * Placeholder em favo de mel — usado quando a oferta não tem foto ou a URL
+ * falha ao carregar. Puramente decorativo (SVG inline, sem asset externo).
+ */
+function PlaceholderFavo() {
+  return (
+    <div className="relative w-full h-full flex items-center justify-center">
+      <svg className="absolute inset-0 w-full h-full text-mel-300" aria-hidden="true">
+        <defs>
+          <pattern id="favo-oferta" width="24.25" height="21" patternUnits="userSpaceOnUse">
+            <polygon
+              points="12.12,0 24.25,7 24.25,21 12.12,28 0,21 0,7"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#favo-oferta)" />
+      </svg>
+      <Hexagon size={30} strokeWidth={1.3} className="relative text-mel-500" aria-hidden="true" />
+    </div>
   )
 }

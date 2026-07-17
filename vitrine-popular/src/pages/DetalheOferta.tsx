@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useFavoritos, useToggleFavorito } from '@/hooks/useFavoritos'
 import { Button, Badge, Spinner } from '@/components/ui'
 import { formatarPreco, formatarDataRelativa, formatarWhatsApp } from '@/lib/utils'
+import { compartilharOferta } from '@/lib/compartilhar'
 import { useState } from 'react'
 import { dispararToast } from '@/components/ui'
 
@@ -62,9 +63,7 @@ export function DetalheOferta() {
   }
 
   function handleCompartilhar() {
-    navigator.share?.({ title: oferta?.produtoNome, url: window.location.href })
-      ?? navigator.clipboard.writeText(window.location.href)
-        .then(() => dispararToast('Link copiado!', 'success'))
+    if (oferta) compartilharOferta(oferta)
   }
 
   if (isLoading) return (

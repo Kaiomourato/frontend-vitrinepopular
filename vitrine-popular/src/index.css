@@ -127,6 +127,22 @@
   --shadow-sm: 0 1px 2px 0 rgb(90 46 20 / 0.06);
   --shadow-md: 0 4px 10px -2px rgb(90 46 20 / 0.10), 0 2px 4px -2px rgb(90 46 20 / 0.06);
   --shadow-lg: 0 12px 24px -6px rgb(90 46 20 / 0.14), 0 4px 8px -4px rgb(90 46 20 / 0.08);
+
+  /* Microinterações — só transform/opacity, 150–300ms/curtas, sempre
+     atrás de motion-safe: nos componentes que as usam */
+  --animate-surgir: surgir 0.4s ease-out backwards;
+  --animate-pulsar: pulsar 0.35s ease-out;
+}
+
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulsar {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
 }
 
 /* ============================================================
