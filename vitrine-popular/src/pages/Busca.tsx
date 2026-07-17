@@ -70,14 +70,14 @@ export function Busca() {
       ) : (
         <>
           <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            {data.totalElements} oferta{data.totalElements !== 1 ? 's' : ''} encontrada{data.totalElements !== 1 ? 's' : ''}
+            {data.page.totalElements} oferta{data.page.totalElements !== 1 ? 's' : ''} encontrada{data.page.totalElements !== 1 ? 's' : ''}
           </p>
           <OfertaGrid ofertas={data.content} />
-          {data.totalPages > 1 && (
+          {data.page.totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-2">
-              <Button variant="outline" size="sm" disabled={data.first} onClick={() => setPagina(p => p - 1)}>Anterior</Button>
-              <span className="text-sm px-3" style={{ color: 'var(--color-text-secondary)' }}>{data.number + 1} / {data.totalPages}</span>
-              <Button variant="outline" size="sm" disabled={data.last} onClick={() => setPagina(p => p + 1)}>Próxima</Button>
+              <Button variant="outline" size="sm" disabled={data.page.number === 0} onClick={() => setPagina(p => p - 1)}>Anterior</Button>
+              <span className="text-sm px-3" style={{ color: 'var(--color-text-secondary)' }}>{data.page.number + 1} / {data.page.totalPages}</span>
+              <Button variant="outline" size="sm" disabled={data.page.number + 1 >= data.page.totalPages} onClick={() => setPagina(p => p + 1)}>Próxima</Button>
             </div>
           )}
         </>

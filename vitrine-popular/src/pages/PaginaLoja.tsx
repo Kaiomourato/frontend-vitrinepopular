@@ -93,11 +93,11 @@ export function PaginaLoja() {
         ) : (
           <>
             <OfertaGrid ofertas={ofertas.content} />
-            {ofertas.totalPages > 1 && (
+            {ofertas.page.totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 pt-6">
-                <Button variant="outline" size="sm" disabled={ofertas.first} onClick={() => setPagina(p => p - 1)}>Anterior</Button>
-                <span className="text-sm px-3" style={{ color: 'var(--color-text-secondary)' }}>{ofertas.number + 1} / {ofertas.totalPages}</span>
-                <Button variant="outline" size="sm" disabled={ofertas.last} onClick={() => setPagina(p => p + 1)}>Próxima</Button>
+                <Button variant="outline" size="sm" disabled={ofertas.page.number === 0} onClick={() => setPagina(p => p - 1)}>Anterior</Button>
+                <span className="text-sm px-3" style={{ color: 'var(--color-text-secondary)' }}>{ofertas.page.number + 1} / {ofertas.page.totalPages}</span>
+                <Button variant="outline" size="sm" disabled={ofertas.page.number + 1 >= ofertas.page.totalPages} onClick={() => setPagina(p => p + 1)}>Próxima</Button>
               </div>
             )}
           </>

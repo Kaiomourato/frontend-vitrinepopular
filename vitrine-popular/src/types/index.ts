@@ -87,16 +87,21 @@ export interface ListarOfertasParams {
   categoriaId?: number
 }
 
-// ── Paginação (padrão Spring Page<T>) ────────────────────────────────────────
-export interface PageResponse<T> {
-  content: T[]
+// ── Paginação ─────────────────────────────────────────────────────────────────
+// Formato real observado na API (Spring Boot 3.2+ com spring-data-web
+// "page-as-object"): os metadados vêm aninhados em `page`, sem os campos
+// `first`/`last`/`empty` do Page<T> "clássico" — derive-os de
+// `page.number`/`page.totalPages` quando precisar.
+export interface PageMetadata {
+  size: number
+  number: number
   totalElements: number
   totalPages: number
-  number: number
-  size: number
-  first: boolean
-  last: boolean
-  empty: boolean
+}
+
+export interface PageResponse<T> {
+  content: T[]
+  page: PageMetadata
 }
 
 // ── Erro da API ───────────────────────────────────────────────────────────────
