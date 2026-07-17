@@ -45,21 +45,20 @@ export function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-cream-50">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 font-bold text-xl" style={{ color: 'var(--color-primary)' }}>
-            <ShoppingBag size={28} /> Vitrine Popular
+          <Link to="/" className="inline-flex items-center gap-2 font-bold text-xl text-terracota-600">
+            <ShoppingBag size={28} /> <span className="font-display">Vitrine Popular</span>
           </Link>
-          <h1 className="mt-4 text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Entrar na sua conta</h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+          <h1 className="mt-4 font-display text-display-sm font-semibold text-ink-900">Entrar na sua conta</h1>
+          <p className="text-sm mt-1 text-ink-700">
             Não tem conta?{' '}
-            <Link to="/registro" style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Cadastre-se grátis</Link>
+            <Link to="/registro" className="font-medium text-terracota-600">Cadastre-se grátis</Link>
           </p>
         </div>
 
-        <div className="rounded-[20px] border p-6 md:p-8 flex flex-col gap-5"
-          style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+        <div className="rounded-xl border border-sand-200 bg-white p-6 md:p-8 flex flex-col gap-5">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Input
               label="E-mail"
@@ -83,8 +82,8 @@ export function Login() {
           </form>
         </div>
 
-        <p className="text-center text-xs mt-6" style={{ color: 'var(--color-text-muted)' }}>
-          <Link to="/" style={{ color: 'var(--color-text-secondary)' }}>← Voltar ao feed</Link>
+        <p className="text-center text-xs mt-6 text-ink-500">
+          <Link to="/" className="text-ink-700">← Voltar aos achados</Link>
         </p>
       </div>
     </div>

@@ -8,10 +8,11 @@ import {
 } from 'lucide-react'
 import { authService } from '@/services/auth'
 import { lojasService } from '@/services/lojas'
+import { useAuthStore } from '@/store/authStore'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { dispararToast } from '@/components/ui'
-import { extrairErroApi } from '@/lib/utils'
+import { extrairErroApi, cn } from '@/lib/utils'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { Resolver } from 'react-hook-form'
@@ -50,6 +51,7 @@ type SubPasso     = 'escolha' | 'nova-loja' | 'pin-gerado' | 'vincular'
 
 export function Registro() {
   const navigate = useNavigate()
+  const login = useAuthStore(s => s.login)
 
   const [passo,      setPasso]      = useState<1 | 2>(1)
   const [subPasso,   setSubPasso]   = useState<SubPasso>('escolha')
@@ -113,9 +115,10 @@ export function Registro() {
         perfil: 'COLABORADOR',
       })
 
-      // 2. Faz login para obter token
+      // 2. Faz login para obter token — passa pelo authStore (não localStorage
+      // direto) pra manter o estado reativo do app consistente com a sessão.
       const loginResp = await authService.login(dadosBase.email, dadosBase.senha)
-      localStorage.setItem('vp_token', loginResp.token)
+      login(loginResp.token, loginResp.perfil)
 
       // 3. Cria a loja (agora autenticado)
       const loja = await lojasService.criar(data.nome, data.endereco, data.whatsapp)
@@ -134,10 +137,9 @@ export function Registro() {
     setLoading(true)
     try {
       await authService.vincularLoja(lojaCriada.id, lojaCriada.pin!)
-      // Atualiza o token com o novo perfil (re-login)
+      // Atualiza o token/perfil com o novo vínculo (re-login) via authStore
       const loginResp = await authService.login(dadosBase!.email, dadosBase!.senha)
-      localStorage.setItem('vp_token', loginResp.token)
-      localStorage.setItem('vp_usuario', JSON.stringify(loginResp.perfil))
+      login(loginResp.token, loginResp.perfil)
       dispararToast('Conta de lojista ativada! Bem-vindo.', 'success')
       navigate('/dashboard')
     } catch (err) {
@@ -179,47 +181,43 @@ export function Registro() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: 'var(--color-bg)' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-cream-50">
       <div className="w-full max-w-md">
 
-        {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 font-bold text-xl" style={{ color: 'var(--color-primary)' }}>
-            <ShoppingBag size={28} /> Vitrine Popular
+          <Link to="/" className="inline-flex items-center gap-2 font-bold text-xl text-terracota-600">
+            <ShoppingBag size={28} /> <span className="font-display">Vitrine Popular</span>
           </Link>
-          <h1 className="mt-4 text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{titulo()}</h1>
+          <h1 className="mt-4 font-display text-display-sm font-semibold text-ink-900">{titulo()}</h1>
           {passo === 1 && (
-            <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-sm mt-1 text-ink-700">
               Já tem conta?{' '}
-              <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Entrar</Link>
+              <Link to="/login" className="font-medium text-terracota-600">Entrar</Link>
             </p>
           )}
         </div>
 
-        {/* Indicador de passos */}
         {tipoSelecionado === 'LOJISTA' && (
           <div className="flex items-center gap-2 mb-6 justify-center">
             {[1, 2].map(n => (
               <div key={n} className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-                  style={{
-                    background: passo >= n ? 'var(--color-primary)' : 'var(--color-surface-hover)',
-                    color:      passo >= n ? '#fff' : 'var(--color-text-muted)',
-                    border:     `1.5px solid ${passo >= n ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                  }}>{n}</div>
-                {n < 2 && <div style={{ width: 32, height: 1.5, background: passo > n ? 'var(--color-primary)' : 'var(--color-border)' }} />}
+                <div className={cn(
+                  'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-[1.5px] transition-colors',
+                  passo >= n ? 'bg-terracota-500 border-terracota-500 text-white' : 'bg-sand-100 border-sand-200 text-ink-500'
+                )}>{n}</div>
+                {n < 2 && <div className={cn('w-8 h-[1.5px]', passo > n ? 'bg-terracota-500' : 'bg-sand-200')} />}
               </div>
             ))}
           </div>
         )}
 
-        <div className="rounded-[20px] border p-6 md:p-8" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+        <div className="rounded-xl border border-sand-200 bg-white p-6 md:p-8">
 
           {/* ══ PASSO 1 ══ */}
           {passo === 1 && (
             <form onSubmit={formBase.handleSubmit(onSubmitBase)} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Tipo de conta</p>
+                <p className="text-sm font-medium text-ink-900">Tipo de conta</p>
                 <div className="grid grid-cols-2 gap-3">
                   {([
                     { val: 'COLABORADOR', label: 'Colaborador', sub: 'Divulgo ofertas que encontro', Icon: Users },
@@ -227,16 +225,18 @@ export function Registro() {
                   ] as const).map(({ val, label, sub, Icon }) => {
                     const ativo = tipoSelecionado === val
                     return (
-                      <button key={val} type="button" onClick={() => formBase.setValue('tipo', val)}
-                        className="flex flex-col items-center gap-1.5 p-4 rounded-[12px] border transition-all text-center"
-                        style={{
-                          borderColor: ativo ? 'var(--color-primary)' : 'var(--color-border)',
-                          background:  ativo ? 'var(--color-primary-light)' : 'transparent',
-                          borderWidth: ativo ? 2 : 1.5,
-                        }}>
-                        <Icon size={22} style={{ color: ativo ? 'var(--color-primary)' : 'var(--color-text-muted)' }} />
-                        <span className="text-sm font-semibold" style={{ color: ativo ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>{label}</span>
-                        <span className="text-xs leading-tight" style={{ color: 'var(--color-text-muted)' }}>{sub}</span>
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => formBase.setValue('tipo', val)}
+                        className={cn(
+                          'flex flex-col items-center gap-1.5 p-4 rounded-xl border text-center transition-colors',
+                          ativo ? 'border-2 border-terracota-500 bg-terracota-50' : 'border-[1.5px] border-sand-200'
+                        )}
+                      >
+                        <Icon size={22} className={ativo ? 'text-terracota-600' : 'text-ink-500'} />
+                        <span className={cn('text-sm font-semibold', ativo ? 'text-terracota-700' : 'text-ink-900')}>{label}</span>
+                        <span className="text-xs leading-tight text-ink-500">{sub}</span>
                       </button>
                     )
                   })}
@@ -253,7 +253,7 @@ export function Registro() {
                 error={formBase.formState.errors.confirmarSenha?.message} {...formBase.register('confirmarSenha')} />
 
               {tipoSelecionado === 'LOJISTA' && (
-                <div className="rounded-[10px] p-3 text-xs" style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
+                <div className="rounded-lg p-3 text-xs bg-terracota-50 text-terracota-700">
                   No próximo passo pode cadastrar a sua loja ou vincular-se a uma já existente com o PIN.
                 </div>
               )}
@@ -269,7 +269,7 @@ export function Registro() {
           {/* ══ PASSO 2 — ESCOLHA ══ */}
           {passo === 2 && subPasso === 'escolha' && (
             <div className="flex flex-col gap-4">
-              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>O que deseja fazer com a sua loja?</p>
+              <p className="text-sm text-ink-700">O que deseja fazer com a sua loja?</p>
 
               {[
                 {
@@ -285,22 +285,23 @@ export function Registro() {
                   desc: 'Minha loja já está cadastrada e tenho o PIN em mãos.',
                 },
               ].map(({ sub, Icon, titulo, desc }) => (
-                <button key={sub} type="button" onClick={() => setSubPasso(sub)}
-                  className="flex items-start gap-4 p-4 rounded-[14px] border text-left transition-all hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]"
-                  style={{ borderColor: 'var(--color-border)' }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ background: 'var(--color-primary-light)' }}>
-                    <Icon size={20} style={{ color: 'var(--color-primary)' }} />
+                <button
+                  key={sub}
+                  type="button"
+                  onClick={() => setSubPasso(sub)}
+                  className="flex items-start gap-4 p-4 rounded-xl border border-sand-200 text-left transition-colors hover:border-terracota-500 hover:bg-terracota-50"
+                >
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-terracota-50">
+                    <Icon size={20} className="text-terracota-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{titulo}</p>
-                    <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
+                    <p className="font-semibold text-sm text-ink-900">{titulo}</p>
+                    <p className="text-xs mt-0.5 text-ink-500">{desc}</p>
                   </div>
                 </button>
               ))}
 
-              <button type="button" onClick={() => setPasso(1)}
-                className="flex items-center gap-1 text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
+              <button type="button" onClick={() => setPasso(1)} className="flex items-center gap-1 text-sm mt-1 text-ink-500">
                 <ChevronLeft size={15} /> Voltar
               </button>
             </div>
@@ -309,7 +310,7 @@ export function Registro() {
           {/* ══ PASSO 2 — NOVA LOJA ══ */}
           {passo === 2 && subPasso === 'nova-loja' && (
             <form onSubmit={formNovaLoja.handleSubmit(onSubmitNovaLoja)} className="flex flex-col gap-4">
-              <div className="rounded-[10px] p-3 text-xs" style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
+              <div className="rounded-lg p-3 text-xs bg-terracota-50 text-terracota-700">
                 <strong>Como funciona:</strong> sua conta e loja serão criadas. Você receberá um PIN — guarde-o para vincular funcionários no futuro.
               </div>
 
@@ -332,33 +333,27 @@ export function Registro() {
           {/* ══ PASSO 2 — PIN GERADO ══ */}
           {passo === 2 && subPasso === 'pin-gerado' && lojaCriada && (
             <div className="flex flex-col gap-5">
-              {/* PIN em destaque */}
-              <div className="rounded-[14px] p-5 border-2 text-center"
-                style={{ borderColor: 'var(--color-primary)', background: 'var(--color-primary-light)' }}>
-                <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--color-primary)' }}>
+              <div className="rounded-xl p-5 border-2 border-terracota-500 bg-terracota-50 text-center">
+                <p className="text-xs font-semibold uppercase tracking-widest mb-2 text-terracota-700">
                   PIN secreto — {lojaCriada.nome}
                 </p>
-                <p className="text-4xl font-bold tracking-[0.25em]"
-                  style={{ color: 'var(--color-primary)', fontFamily: 'monospace' }}>
+                <p className="text-4xl font-semibold tracking-[0.25em] font-mono text-terracota-700">
                   {lojaCriada.pin}
                 </p>
-                <p className="text-xs mt-2" style={{ color: 'var(--color-primary)' }}>
+                <p className="text-xs mt-2 text-terracota-700">
                   Anote agora — não será exibido novamente
                 </p>
               </div>
 
-              <div className="rounded-[10px] p-3 text-xs" style={{ background: 'var(--color-surface-hover)', color: 'var(--color-text-secondary)' }}>
+              <div className="rounded-lg p-3 text-xs bg-sand-100 text-ink-700">
                 Sua conta de colaborador foi criada. Deseja já se vincular a esta loja como <strong>Lojista</strong>?
               </div>
 
-              {/* Ação principal: vincular agora */}
               <Button onClick={vincularAutomatico} loading={loading}>
                 Sim, vincular-me como lojista agora
               </Button>
 
-              {/* Ação secundária: ir para login (fica como colaborador) */}
-              <button type="button" onClick={() => navigate('/login')}
-                className="text-sm text-center" style={{ color: 'var(--color-text-muted)' }}>
+              <button type="button" onClick={() => navigate('/login')} className="text-sm text-center text-ink-500">
                 Agora não — entrar como colaborador
               </button>
             </div>
@@ -367,21 +362,21 @@ export function Registro() {
           {/* ══ PASSO 2 — VINCULAR LOJA EXISTENTE ══ */}
           {passo === 2 && subPasso === 'vincular' && (
             <form onSubmit={formVincular.handleSubmit(onSubmitVincular)} className="flex flex-col gap-4">
-              <div className="rounded-[10px] p-3 text-xs" style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
+              <div className="rounded-lg p-3 text-xs bg-terracota-50 text-terracota-700">
                 <strong>PIN secreto:</strong> entregue pela equipa da Vitrine Popular ao dono do estabelecimento.
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Selecione a sua loja</label>
+                <label className="text-sm font-medium text-ink-900">Selecione a sua loja</label>
                 <div className="relative">
-                  <Store size={16} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                    style={{ color: 'var(--color-text-muted)' }} />
-                  <select {...formVincular.register('lojaId')}
-                    className="w-full h-10 pl-10 pr-4 rounded-[10px] border text-sm outline-none appearance-none"
-                    style={{
-                      borderColor: formVincular.formState.errors.lojaId ? 'var(--color-danger)' : 'var(--color-border)',
-                      background: 'var(--color-surface)', color: 'var(--color-text-primary)',
-                    }}>
+                  <Store size={16} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-ink-500" />
+                  <select
+                    {...formVincular.register('lojaId')}
+                    className={cn(
+                      'w-full h-10 pl-10 pr-4 rounded-lg border text-sm outline-none appearance-none bg-white text-ink-900',
+                      formVincular.formState.errors.lojaId ? 'border-perigo-600' : 'border-sand-200'
+                    )}
+                  >
                     <option value={0}>Selecione...</option>
                     {lojas.map(l => (
                       <option key={l.id} value={l.id}>{l.nome}{l.endereco ? ` — ${l.endereco}` : ''}</option>
@@ -389,7 +384,7 @@ export function Registro() {
                   </select>
                 </div>
                 {formVincular.formState.errors.lojaId && (
-                  <p className="text-xs" style={{ color: 'var(--color-danger)' }}>{formVincular.formState.errors.lojaId.message}</p>
+                  <p className="text-xs text-perigo-600">{formVincular.formState.errors.lojaId.message}</p>
                 )}
               </div>
 
@@ -409,7 +404,7 @@ export function Registro() {
         </div>
 
         <p className="text-center text-xs mt-6">
-          <Link to="/" style={{ color: 'var(--color-text-secondary)' }}>← Voltar ao feed</Link>
+          <Link to="/" className="text-ink-700">← Voltar aos achados</Link>
         </p>
       </div>
     </div>
