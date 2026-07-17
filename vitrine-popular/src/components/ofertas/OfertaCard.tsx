@@ -139,9 +139,17 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
 
         {/* Rodapé: frescor do dado + ações */}
         <div className="flex items-center justify-between gap-1 pt-1 border-t border-sand-200">
-          <span className="flex items-center gap-1 text-xs text-ink-500">
-            <Clock size={11} />
-            Visto {formatarDataRelativa(oferta.dataPostagem)}
+          <span className="flex items-center gap-2 text-xs text-ink-500">
+            <span className="flex items-center gap-1">
+              <Clock size={11} />
+              Visto {formatarDataRelativa(oferta.dataPostagem)}
+            </span>
+            {oferta.interessados > 0 && (
+              <span className="flex items-center gap-0.5">
+                <Heart size={11} />
+                {oferta.interessados}
+              </span>
+            )}
           </span>
           <div className="flex items-center gap-0.5">
             <button

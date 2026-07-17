@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Upload, ImageIcon } from 'lucide-react'
 import { ofertasService } from '@/services/ofertas'
-import { categoriasService } from '@/services/lojas'
+import { categoriasService, lojasService } from '@/services/lojas'
 import { useAuthStore } from '@/store/authStore'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
@@ -21,6 +21,7 @@ const schema = z.object({
   descricao:   z.string().max(500).optional(),
   preco:       z.coerce.number().positive('Preço deve ser maior que zero'),
   categoriaId: z.coerce.number().min(1, 'Selecione uma categoria'),
+  lojaId:      z.coerce.number().optional(), // só usado pelo fluxo do COLABORADOR
 })
 type Form = z.infer<typeof schema>
 
@@ -32,7 +33,14 @@ export function NovaOferta() {
   const [imagem, setImagem] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [erroImagem, setErroImagem] = useState('')
+  const [erroLoja, setErroLoja] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // LOJISTA publica direto na própria loja (fluxo inalterado); qualquer outro
+  // perfil está "sugerindo" uma oferta para uma loja já existente — entra em
+  // moderação (PENDENTE) até o lojista dono ou um admin aprovar.
+  const ehLojista = usuario?.perfil === 'LOJISTA'
+  const ehSugestao = !ehLojista
 
   const { data: categorias = [] } = useQuery({
     queryKey: ['categorias'],
@@ -40,9 +48,16 @@ export function NovaOferta() {
     staleTime: Infinity,
   })
 
+  const { data: lojas = [] } = useQuery({
+    queryKey: ['lojas'],
+    queryFn: lojasService.listar,
+    staleTime: Infinity,
+    enabled: ehSugestao,
+  })
+
   const { register, handleSubmit, watch, formState: { errors } } = useForm<Form>({
     resolver: zodResolver(schema) as Resolver<Form>,
-    defaultValues: { categoriaId: 0 },
+    defaultValues: { categoriaId: 0, lojaId: 0 },
   })
 
   const precoValor = watch('preco')
@@ -58,21 +73,37 @@ export function NovaOferta() {
 
   async function onSubmit(data: Form) {
     if (!imagem) { setErroImagem('Selecione uma imagem para a oferta'); return }
-    if (!usuario?.loja?.id) { dispararToast('Nenhuma loja vinculada à sua conta.', 'error'); return }
+
+    setErroLoja('')
+    let lojaId: number | undefined
+
+    if (ehLojista) {
+      if (!usuario?.loja?.id) { dispararToast('Nenhuma loja vinculada à sua conta.', 'error'); return }
+      lojaId = usuario.loja.id
+    } else {
+      if (!data.lojaId) { setErroLoja('Selecione a loja onde esse achado está'); return }
+      lojaId = data.lojaId
+    }
+
     setLoading(true)
     try {
       const dados = JSON.stringify({
         produtoNome: data.produtoNome,
         descricao:   data.descricao,
         preco:       data.preco,
-        lojaId:      usuario.loja.id,
+        lojaId,
         categoriaId: data.categoriaId,
       })
       await ofertasService.criar(dados, imagem)
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['ofertas'] })
-      dispararToast('Oferta publicada com sucesso!', 'success')
-      navigate('/dashboard')
+      dispararToast(
+        ehSugestao
+          ? 'Sugestão enviada! Ela entra no ar assim que for aprovada pela loja ou por um admin.'
+          : 'Oferta publicada com sucesso!',
+        'success'
+      )
+      navigate(ehSugestao ? '/perfil' : '/dashboard')
     } catch (err) {
       dispararToast(extrairErroApi(err), 'error')
     } finally {
@@ -86,7 +117,14 @@ export function NovaOferta() {
         <ArrowLeft size={16} /> Voltar
       </button>
 
-      <h1 className="font-display text-display-md font-semibold mb-6 text-ink-900">Nova oferta</h1>
+      <h1 className={cn('font-display text-display-md font-semibold text-ink-900', ehSugestao ? 'mb-2' : 'mb-6')}>
+        {ehSugestao ? 'Sugerir achado' : 'Nova oferta'}
+      </h1>
+      {ehSugestao && (
+        <p className="text-sm mb-6 text-ink-700">
+          Sua sugestão entra em análise: só aparece para todo mundo depois que a loja ou um admin aprovar.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
@@ -153,16 +191,25 @@ export function NovaOferta() {
           </Select>
         </div>
 
-        {usuario?.loja && (
-          <div className="rounded-lg p-3 text-sm border border-sand-200 bg-cream-50">
-            <span className="text-ink-700">Publicando em: </span>
-            <span className="font-medium text-ink-900">{usuario.loja.nome}</span>
-          </div>
+        {ehLojista ? (
+          usuario?.loja && (
+            <div className="rounded-lg p-3 text-sm border border-sand-200 bg-cream-50">
+              <span className="text-ink-700">Publicando em: </span>
+              <span className="font-medium text-ink-900">{usuario.loja.nome}</span>
+            </div>
+          )
+        ) : (
+          <Select label="Loja onde encontrou esse achado" error={erroLoja} {...register('lojaId')}>
+            <option value={0} disabled>Selecione...</option>
+            {lojas.map(l => <option key={l.id} value={l.id}>{l.nome}</option>)}
+          </Select>
         )}
 
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="outline" className="flex-1" onClick={() => navigate(-1)}>Cancelar</Button>
-          <Button type="submit" className="flex-1" loading={loading}>Publicar oferta</Button>
+          <Button type="submit" className="flex-1" loading={loading}>
+            {ehSugestao ? 'Enviar sugestão' : 'Publicar oferta'}
+          </Button>
         </div>
       </form>
     </div>

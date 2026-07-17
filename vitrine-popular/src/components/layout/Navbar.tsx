@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, ShoppingBag, Plus, Compass, LayoutDashboard, LogOut, Heart, ShieldAlert } from 'lucide-react'
+import { Search, ShoppingBag, Plus, Compass, LayoutDashboard, LogOut, Heart, ShieldAlert, Trophy } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
 
@@ -55,6 +55,19 @@ export function Navbar() {
         >
           <Compass size={16} />
           Descobrir
+        </NavLink>
+
+        <NavLink
+          to="/ranking"
+          className={({ isActive }) =>
+            cn(
+              'hidden md:flex items-center gap-1.5 text-sm font-medium shrink-0 transition-colors',
+              isActive ? 'text-terracota-600' : 'text-ink-700 hover:text-terracota-600'
+            )
+          }
+        >
+          <Trophy size={16} />
+          Ranking
         </NavLink>
 
         <form onSubmit={handleBusca} className="hidden md:flex flex-1 max-w-xl mx-auto relative">

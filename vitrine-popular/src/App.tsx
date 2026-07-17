@@ -12,6 +12,7 @@ const Descobrir      = lazy(() => import('@/pages/Descobrir').then(m => ({ defau
 const DetalheOferta  = lazy(() => import('@/pages/DetalheOferta').then(m => ({ default: m.DetalheOferta })))
 const PaginaLoja     = lazy(() => import('@/pages/PaginaLoja').then(m => ({ default: m.PaginaLoja })))
 const Busca          = lazy(() => import('@/pages/Busca').then(m => ({ default: m.Busca })))
+const Ranking        = lazy(() => import('@/pages/Ranking').then(m => ({ default: m.Ranking })))
 const Perfil         = lazy(() => import('@/pages/Perfil').then(m => ({ default: m.Perfil })))
 const Login          = lazy(() => import('@/pages/Login').then(m => ({ default: m.Login })))
 const Registro       = lazy(() => import('@/pages/Registro').then(m => ({ default: m.Registro })))
@@ -47,6 +48,7 @@ export default function App() {
               <Route path="/oferta/:id"  element={<DetalheOferta />} />
               <Route path="/loja/:id"    element={<PaginaLoja />} />
               <Route path="/busca"       element={<Busca />} />
+              <Route path="/ranking"     element={<Ranking />} />
               <Route path="/perfil"      element={<Perfil />} />
             </Route>
 

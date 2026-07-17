@@ -1,23 +1,25 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit, Trash2, ShoppingBag, Clock, XCircle } from 'lucide-react'
+import { Plus, Edit, Trash2, ShoppingBag, Clock, XCircle, Check, X, Sparkles } from 'lucide-react'
 import { ofertasService } from '@/services/ofertas'
 import { useAuthStore } from '@/store/authStore'
 import { Button, Badge, EmptyState } from '@/components/ui'
 import { dispararToast } from '@/components/ui'
-import { cn, formatarPreco, formatarDataRelativa } from '@/lib/utils'
+import { cn, formatarPreco, formatarDataRelativa, extrairErroApi } from '@/lib/utils'
 import type { StatusOferta } from '@/types'
 
 const STATUS_LABEL: Record<StatusOferta, string> = {
   ATIVA: 'Ativa',
   EXPIRADA: 'Expirada',
   REMOVIDA: 'Removida',
+  PENDENTE: 'Pendente',
 }
-const STATUS_VARIANT: Record<StatusOferta, 'success' | 'warning' | 'danger'> = {
+const STATUS_VARIANT: Record<StatusOferta, 'success' | 'warning' | 'danger' | 'primary'> = {
   ATIVA: 'success',
   EXPIRADA: 'warning',
   REMOVIDA: 'danger',
+  PENDENTE: 'primary',
 }
 
 export function Dashboard() {
@@ -49,6 +51,38 @@ export function Dashboard() {
     },
   })
 
+  // [NOVO] Fila de moderação (RF12 estendido) — sugestões de COLABORADOR aguardando
+  // aprovação do lojista dono. O backend já escopa a fila pela loja do usuário logado.
+  const { data: pendentesData } = useQuery({
+    queryKey: ['dashboard', 'pendentes', lojaId],
+    queryFn: () => ofertasService.listarPendentes(0, 50),
+    enabled: !!lojaId,
+  })
+  const pendentes = pendentesData?.content ?? []
+
+  function invalidarPendentesEFeed() {
+    queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+    queryClient.invalidateQueries({ queryKey: ['ofertas'] })
+  }
+
+  const aprovar = useMutation({
+    mutationFn: (id: number) => ofertasService.aprovar(id),
+    onSuccess: () => {
+      invalidarPendentesEFeed()
+      dispararToast('Oferta aprovada e publicada!', 'success')
+    },
+    onError: (err) => dispararToast(extrairErroApi(err), 'error'),
+  })
+
+  const rejeitar = useMutation({
+    mutationFn: (id: number) => ofertasService.rejeitar(id),
+    onSuccess: () => {
+      invalidarPendentesEFeed()
+      dispararToast('Sugestão rejeitada.', 'success')
+    },
+    onError: (err) => dispararToast(extrairErroApi(err), 'error'),
+  })
+
   const ofertas = data?.content ?? []
   const ofertasFiltradas = filtro === 'TODAS' ? ofertas : ofertas.filter(o => o.status === filtro)
 
@@ -74,6 +108,53 @@ export function Dashboard() {
           <Plus size={16} /> Nova oferta
         </Button>
       </div>
+
+      {!!pendentes.length && (
+        <section className="flex flex-col gap-3 rounded-xl border border-mel-200 bg-mel-50 p-4">
+          <h2 className="flex items-center gap-2 font-semibold text-sm text-ink-900">
+            <Sparkles size={16} className="text-mel-600" />
+            Sugestões aguardando sua aprovação ({pendentes.length})
+          </h2>
+          <div className="flex flex-col gap-2">
+            {pendentes.map(oferta => (
+              <div key={oferta.id} className="flex items-center gap-3 p-3 rounded-xl border border-sand-200 bg-white">
+                {oferta.imagemUrl && (
+                  <img
+                    src={oferta.imagemUrl}
+                    alt={oferta.produtoNome}
+                    className="w-12 h-12 rounded-lg object-cover shrink-0 border border-sand-200"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate text-ink-900">{oferta.produtoNome}</p>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap text-xs text-ink-700">
+                    <span className="font-semibold text-terracota-700">{formatarPreco(oferta.preco)}</span>
+                    {oferta.autor && <span>Sugerido por {oferta.autor.nome}</span>}
+                    <span className="text-ink-500">{formatarDataRelativa(oferta.dataPostagem)}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    loading={rejeitar.isPending && rejeitar.variables === oferta.id}
+                    onClick={() => rejeitar.mutate(oferta.id)}
+                  >
+                    <X size={14} />
+                  </Button>
+                  <Button
+                    size="sm"
+                    loading={aprovar.isPending && aprovar.variables === oferta.id}
+                    onClick={() => aprovar.mutate(oferta.id)}
+                  >
+                    <Check size={14} /> Aprovar
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {(['TODAS', 'ATIVA', 'EXPIRADA', 'REMOVIDA'] as const).map(s => (

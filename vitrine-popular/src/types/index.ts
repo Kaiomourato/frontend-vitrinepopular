@@ -39,7 +39,11 @@ export interface LojaResponse {
 }
 
 // ── Ofertas ───────────────────────────────────────────────────────────────────
-export type StatusOferta = 'ATIVA' | 'EXPIRADA' | 'REMOVIDA'
+// PENDENTE: sugestão de COLABORADOR aguardando aprovação do lojista dono ou de um admin.
+export type StatusOferta = 'ATIVA' | 'EXPIRADA' | 'REMOVIDA' | 'PENDENTE'
+
+// Quem originou a oferta — LOJISTA (fluxo direto, nasce ATIVA) ou COLABORADOR (sugestão, nasce PENDENTE)
+export type OrigemOferta = 'COLABORADOR' | 'LOJISTA'
 
 export interface LojaResumo {
   id: number
@@ -49,6 +53,11 @@ export interface LojaResumo {
 }
 
 export interface CategoriaResumo {
+  id: number
+  nome: string
+}
+
+export interface AutorResumo {
   id: number
   nome: string
 }
@@ -63,6 +72,9 @@ export interface OfertaResponse {
   dataPostagem: string
   votosAcabou: number
   votosAindaTem: number
+  interessados: number      // contagem de favoritos
+  origem: OrigemOferta
+  autor: AutorResumo | null
   loja: LojaResumo
   categoria: CategoriaResumo
 }
@@ -73,6 +85,28 @@ export interface OfertaRequest {
   preco: number
   lojaId: number
   categoriaId: number
+}
+
+// ── Gamificação ──────────────────────────────────────────────────────────────
+export type Medalha = 'BRONZE' | 'PRATA' | 'OURO'
+
+export interface RankingColaborador {
+  usuarioId: number
+  nome: string
+  contribuicoesAprovadas: number
+}
+
+export interface RankingLoja {
+  lojaId: number
+  nome: string
+  endereco: string | null
+  popularidade: number
+}
+
+export interface UsuarioGamificacao {
+  usuarioId: number
+  contribuicoesAprovadas: number
+  medalha: Medalha | null
 }
 
 // ── Ordenação e filtros do feed (RF06/RF07) ─────────────────────────────────

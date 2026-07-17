@@ -64,4 +64,17 @@ export const ofertasService = {
   // Deletar oferta
   deletar: (id: number) =>
     api.delete(`/api/ofertas/${id}`),
+
+  // ── Moderação (RF12 estendido) — fila de ofertas PENDENTE ──────────────────
+  // ADMIN vê a fila inteira; LOJISTA vê apenas as pendentes da própria loja.
+  listarPendentes: (page = 0, size = 10) =>
+    api.get<PageResponse<OfertaResponse>>('/api/ofertas/moderacao/pendentes', {
+      params: { page, size },
+    }).then(r => r.data),
+
+  aprovar: (id: number) =>
+    api.patch<OfertaResponse>(`/api/ofertas/${id}/aprovar`).then(r => r.data),
+
+  rejeitar: (id: number) =>
+    api.patch<OfertaResponse>(`/api/ofertas/${id}/rejeitar`).then(r => r.data),
 }

@@ -1,7 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag, Trophy, Medal } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
+import { gamificacaoService } from '@/services/gamificacao'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui'
+import type { Medalha } from '@/types'
+
+const MEDALHA_LABEL: Record<Medalha, string> = { BRONZE: 'Bronze', PRATA: 'Prata', OURO: 'Ouro' }
+const MEDALHA_COR: Record<Medalha, string> = {
+  BRONZE: 'bg-terracota-100 text-terracota-700',
+  PRATA: 'bg-sand-200 text-ink-900',
+  OURO: 'bg-mel-200 text-mel-700',
+}
 
 const ROTULO_PERFIL: Record<string, string> = {
   LOJISTA: 'Lojista',
@@ -12,6 +23,12 @@ const ROTULO_PERFIL: Record<string, string> = {
 export function Perfil() {
   const { isAutenticado, usuario, logout } = useAuthStore()
   const navigate = useNavigate()
+
+  const { data: gamificacao } = useQuery({
+    queryKey: ['gamificacao', usuario?.id],
+    queryFn: () => gamificacaoService.buscarPorUsuario(usuario!.id),
+    enabled: !!usuario?.id,
+  })
 
   function handleLogout() {
     logout()
@@ -44,22 +61,28 @@ export function Perfil() {
         <div className="w-14 h-14 shrink-0 rounded-full flex items-center justify-center text-xl font-bold bg-terracota-50 text-terracota-700">
           {usuario.nome?.[0]?.toUpperCase()}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="font-semibold truncate text-ink-900">{usuario.nome}</p>
           <p className="text-sm truncate text-ink-500">{usuario.email}</p>
           <p className="text-xs mt-0.5 text-ink-500">{ROTULO_PERFIL[usuario.perfil] ?? usuario.perfil}</p>
         </div>
+        {gamificacao?.medalha && (
+          <div className="flex flex-col items-center gap-1 shrink-0">
+            <Badge className={MEDALHA_COR[gamificacao.medalha]}>
+              <Medal size={12} className="mr-1 inline" />{MEDALHA_LABEL[gamificacao.medalha]}
+            </Badge>
+            <span className="text-[11px] text-ink-500">{gamificacao.contribuicoesAprovadas} contribuições</span>
+          </div>
+        )}
       </div>
 
-      {usuario.perfil === 'LOJISTA' && (
-        <Link
-          to="/oferta/nova"
-          className="flex items-center justify-center gap-2 h-12 rounded-lg font-medium bg-terracota-500 text-white transition-colors hover:bg-terracota-600"
-        >
-          <Plus size={18} />
-          Publicar novo achado
-        </Link>
-      )}
+      <Link
+        to="/oferta/nova"
+        className="flex items-center justify-center gap-2 h-12 rounded-lg font-medium bg-terracota-500 text-white transition-colors hover:bg-terracota-600"
+      >
+        <Plus size={18} />
+        {usuario.perfil === 'LOJISTA' ? 'Publicar novo achado' : 'Sugerir um achado'}
+      </Link>
 
       <nav className="flex flex-col rounded-xl border border-sand-200 bg-white overflow-hidden">
         <Link to="/favoritos" className="flex items-center gap-3 px-4 py-3.5 text-sm border-b border-sand-200 text-ink-900 transition-colors hover:bg-sand-100">
@@ -69,6 +92,10 @@ export function Perfil() {
         <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3.5 text-sm border-b border-sand-200 text-ink-900 transition-colors hover:bg-sand-100">
           <LayoutDashboard size={17} className="text-ink-500" />
           Meu painel
+        </Link>
+        <Link to="/ranking" className="flex items-center gap-3 px-4 py-3.5 text-sm border-b border-sand-200 text-ink-900 transition-colors hover:bg-sand-100">
+          <Trophy size={17} className="text-ink-500" />
+          Ranking
         </Link>
         {usuario.perfil === 'ADMIN' && (
           <Link to="/admin" className="flex items-center gap-3 px-4 py-3.5 text-sm border-b border-sand-200 text-ink-900 transition-colors hover:bg-sand-100">

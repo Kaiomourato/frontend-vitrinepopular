@@ -150,9 +150,14 @@ export function DetalheOferta() {
             )}
           </Link>
 
-          <div className="flex items-center gap-3 text-sm text-ink-500">
+          <div className="flex items-center gap-3 text-sm text-ink-500 flex-wrap">
             <span className="flex items-center gap-1"><Clock size={13} /> Visto {formatarDataRelativa(oferta.dataPostagem)}</span>
             <span className="flex items-center gap-1"><Tag size={13} /> {oferta.categoria.nome}</span>
+            {oferta.interessados > 0 && (
+              <span className="flex items-center gap-1">
+                <Heart size={13} /> {oferta.interessados} interessado{oferta.interessados > 1 ? 's' : ''}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col gap-2 pt-2">

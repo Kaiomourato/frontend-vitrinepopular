@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Trash2, Edit, ShieldAlert, Store, ShoppingBag } from 'lucide-react'
+import { Trash2, Edit, ShieldAlert, Store, ShoppingBag, Check, X } from 'lucide-react'
 import { adminService } from '@/services/admin'
 import { lojasService } from '@/services/lojas'
+import { ofertasService } from '@/services/ofertas'
 import { Button, Badge, Select, EmptyState, dispararToast } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
 import { formatarPreco, formatarDataRelativa, extrairErroApi } from '@/lib/utils'
@@ -12,11 +13,13 @@ const STATUS_LABEL: Record<StatusOferta, string> = {
   ATIVA: 'Ativa',
   EXPIRADA: 'Expirada',
   REMOVIDA: 'Removida',
+  PENDENTE: 'Pendente',
 }
-const STATUS_VARIANT: Record<StatusOferta, 'success' | 'warning' | 'danger'> = {
+const STATUS_VARIANT: Record<StatusOferta, 'success' | 'warning' | 'danger' | 'primary'> = {
   ATIVA: 'success',
   EXPIRADA: 'warning',
   REMOVIDA: 'danger',
+  PENDENTE: 'primary',
 }
 
 interface EditLojaForm {
@@ -58,6 +61,27 @@ export function PainelAdmin() {
       dispararToast(extrairErroApi(err), 'error')
       setConfirmandoOfertaId(null)
     },
+  })
+
+  // [NOVO] Moderação (RF12 estendido) — admin também pode aprovar/rejeitar sugestões
+  const aprovarOferta = useMutation({
+    mutationFn: (id: number) => ofertasService.aprovar(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'ofertas'] })
+      queryClient.invalidateQueries({ queryKey: ['ofertas'] })
+      dispararToast('Oferta aprovada.', 'success')
+    },
+    onError: (err) => dispararToast(extrairErroApi(err), 'error'),
+  })
+
+  const rejeitarOferta = useMutation({
+    mutationFn: (id: number) => ofertasService.rejeitar(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'ofertas'] })
+      queryClient.invalidateQueries({ queryKey: ['ofertas'] })
+      dispararToast('Sugestão rejeitada.', 'success')
+    },
+    onError: (err) => dispararToast(extrairErroApi(err), 'error'),
   })
 
   // ── Lojas ────────────────────────────────────────────────────────────────
@@ -121,6 +145,7 @@ export function PainelAdmin() {
               onChange={e => setFiltroStatus(e.target.value as StatusOferta | 'TODAS')}
             >
               <option value="TODAS">Todos os status</option>
+              <option value="PENDENTE">Pendente</option>
               <option value="ATIVA">Ativa</option>
               <option value="EXPIRADA">Expirada</option>
               <option value="REMOVIDA">Removida</option>
@@ -158,6 +183,24 @@ export function PainelAdmin() {
                       Confirmar remoção
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => setConfirmandoOfertaId(null)}>Cancelar</Button>
+                  </div>
+                ) : oferta.status === 'PENDENTE' ? (
+                  <div className="flex gap-1 shrink-0">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      loading={rejeitarOferta.isPending && rejeitarOferta.variables === oferta.id}
+                      onClick={() => rejeitarOferta.mutate(oferta.id)}
+                    >
+                      <X size={14} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      loading={aprovarOferta.isPending && aprovarOferta.variables === oferta.id}
+                      onClick={() => aprovarOferta.mutate(oferta.id)}
+                    >
+                      <Check size={14} /> Aprovar
+                    </Button>
                   </div>
                 ) : (
                   <Button variant="ghost" size="sm" onClick={() => setConfirmandoOfertaId(oferta.id)}>
