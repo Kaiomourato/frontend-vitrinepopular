@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Select } from '@/components/ui/index'
 import { Button } from '@/components/ui/Button'
 import { dispararToast } from '@/components/ui'
-import { extrairErroApi, formatarPreco } from '@/lib/utils'
+import { cn, extrairErroApi, formatarPreco } from '@/lib/utils'
 import { useState, useRef } from 'react'
 import type { Resolver } from 'react-hook-form'
 
@@ -82,36 +82,36 @@ export function NovaOferta() {
 
   return (
     <div className="container-app py-6 max-w-2xl">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm mb-6 hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>
+      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm mb-6 hover:opacity-70 text-ink-700">
         <ArrowLeft size={16} /> Voltar
       </button>
 
-      <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>Nova oferta</h1>
+      <h1 className="font-display text-display-md font-semibold mb-6 text-ink-900">Nova oferta</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Foto do produto</span>
+          <span className="text-sm font-medium text-ink-900">Foto do produto</span>
           <div
             onClick={() => inputRef.current?.click()}
-            className="relative border-2 border-dashed rounded-[14px] cursor-pointer transition-all hover:border-[var(--color-primary)] flex flex-col items-center justify-center gap-2 overflow-hidden"
-            style={{
-              borderColor: erroImagem ? 'var(--color-danger)' : 'var(--color-border)',
-              minHeight: 200,
-              background: preview ? 'transparent' : 'var(--color-bg)',
-            }}
+            className={cn(
+              'relative border-2 border-dashed rounded-xl cursor-pointer transition-colors hover:border-terracota-500 flex flex-col items-center justify-center gap-2 overflow-hidden',
+              erroImagem ? 'border-perigo-600' : 'border-sand-200',
+              preview ? 'bg-transparent' : 'bg-cream-50'
+            )}
+            style={{ minHeight: 200 }}
           >
             {preview ? (
               <img src={preview} alt="Preview" className="w-full h-64 object-cover" />
             ) : (
               <>
-                <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'var(--color-primary-light)' }}>
-                  <ImageIcon size={24} style={{ color: 'var(--color-primary)' }} />
+                <div className="w-14 h-14 rounded-full flex items-center justify-center bg-terracota-50">
+                  <ImageIcon size={24} className="text-terracota-600" />
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Clique para selecionar a foto</p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>JPG, PNG ou WEBP · Máximo 5MB</p>
+                  <p className="text-sm font-medium text-ink-900">Clique para selecionar a foto</p>
+                  <p className="text-xs mt-0.5 text-ink-500">JPG, PNG ou WEBP · Máximo 5MB</p>
                 </div>
-                <div className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-sm font-medium" style={{ background: 'var(--color-primary)', color: '#fff' }}>
+                <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-terracota-500 text-white">
                   <Upload size={14} /> Selecionar foto
                 </div>
               </>
@@ -120,11 +120,11 @@ export function NovaOferta() {
           </div>
           {preview && (
             <button type="button" onClick={() => { setPreview(null); setImagem(null) }}
-              className="text-xs self-start" style={{ color: 'var(--color-danger)' }}>
+              className="text-xs self-start text-perigo-600">
               Remover imagem
             </button>
           )}
-          {erroImagem && <p className="text-xs" style={{ color: 'var(--color-danger)' }}>{erroImagem}</p>}
+          {erroImagem && <p className="text-xs text-perigo-600">{erroImagem}</p>}
         </div>
 
         <Input label="Nome do produto" placeholder="Ex: Camiseta estampada azul" error={errors.produtoNome?.message} {...register('produtoNome')} />
@@ -142,7 +142,7 @@ export function NovaOferta() {
               {...register('preco')}
             />
             {precoValor > 0 && (
-              <p className="text-xs font-medium" style={{ color: 'var(--color-primary)' }}>
+              <p className="text-xs font-medium text-terracota-700">
                 {formatarPreco(precoValor)}
               </p>
             )}
@@ -154,9 +154,9 @@ export function NovaOferta() {
         </div>
 
         {usuario?.loja && (
-          <div className="rounded-[10px] p-3 text-sm" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-            <span style={{ color: 'var(--color-text-secondary)' }}>Publicando em: </span>
-            <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{usuario.loja.nome}</span>
+          <div className="rounded-lg p-3 text-sm border border-sand-200 bg-cream-50">
+            <span className="text-ink-700">Publicando em: </span>
+            <span className="font-medium text-ink-900">{usuario.loja.nome}</span>
           </div>
         )}
 

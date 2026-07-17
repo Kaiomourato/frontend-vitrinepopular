@@ -4,9 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Edit, Trash2, ShoppingBag, Clock, XCircle } from 'lucide-react'
 import { ofertasService } from '@/services/ofertas'
 import { useAuthStore } from '@/store/authStore'
-import { Button, Badge, Spinner, EmptyState } from '@/components/ui'
+import { Button, Badge, EmptyState } from '@/components/ui'
 import { dispararToast } from '@/components/ui'
-import { formatarPreco, formatarDataRelativa } from '@/lib/utils'
+import { cn, formatarPreco, formatarDataRelativa } from '@/lib/utils'
 import type { StatusOferta } from '@/types'
 
 const STATUS_LABEL: Record<StatusOferta, string> = {
@@ -61,13 +61,12 @@ export function Dashboard() {
 
   return (
     <div className="container-app py-6 flex flex-col gap-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Meu painel</h1>
+          <h1 className="font-display text-display-md font-semibold text-ink-900">Meu painel</h1>
           {usuario?.loja && (
-            <p className="text-sm mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-              Loja: <Link to={`/loja/${usuario.loja.id}`} style={{ color: 'var(--color-primary)', fontWeight: 500 }}>{usuario.loja.nome}</Link>
+            <p className="text-sm mt-0.5 text-ink-700">
+              Loja: <Link to={`/loja/${usuario.loja.id}`} className="font-medium text-terracota-600">{usuario.loja.nome}</Link>
             </p>
           )}
         </div>
@@ -76,31 +75,32 @@ export function Dashboard() {
         </Button>
       </div>
 
-      {/* Cards resumo */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {(['TODAS', 'ATIVA', 'EXPIRADA', 'REMOVIDA'] as const).map(s => (
           <button
             key={s}
             onClick={() => setFiltro(s)}
-            className="p-4 rounded-[14px] border text-left transition-all hover:border-[var(--color-primary)]"
-            style={{
-              background: filtro === s ? 'var(--color-primary-light)' : 'var(--color-surface)',
-              borderColor: filtro === s ? 'var(--color-primary)' : 'var(--color-border)',
-            }}
+            className={cn(
+              'p-4 rounded-xl border text-left transition-colors hover:border-terracota-500',
+              filtro === s ? 'bg-terracota-50 border-terracota-500' : 'bg-white border-sand-200'
+            )}
           >
-            <p className="text-2xl font-bold" style={{ color: filtro === s ? 'var(--color-primary)' : 'var(--color-text-primary)' }}>
+            <p className={cn('text-2xl font-semibold font-display', filtro === s ? 'text-terracota-700' : 'text-ink-900')}>
               {contadores[s]}
             </p>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-xs mt-0.5 text-ink-700">
               {s === 'TODAS' ? 'Total' : STATUS_LABEL[s]}
             </p>
           </button>
         ))}
       </div>
 
-      {/* Lista de ofertas */}
       {isLoading ? (
-        <div className="flex justify-center py-12"><Spinner size={28} /></div>
+        <div className="flex flex-col gap-2 animate-pulse">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-20 rounded-xl bg-sand-100" />
+          ))}
+        </div>
       ) : !usuario?.loja ? (
         <EmptyState
           icon={<ShoppingBag size={24} />}
@@ -117,27 +117,24 @@ export function Dashboard() {
       ) : (
         <div className="flex flex-col gap-2">
           {ofertasFiltradas.map(oferta => (
-            <div
-              key={oferta.id}
-              className="flex items-center gap-3 p-3 md:p-4 rounded-[12px] border"
-              style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
-            >
-              <img
-                src={oferta.imagemUrl}
-                alt={oferta.produtoNome}
-                className="w-14 h-14 rounded-[10px] object-cover shrink-0 border"
-                style={{ borderColor: 'var(--color-border)' }}
-              />
+            <div key={oferta.id} className="flex items-center gap-3 p-3 md:p-4 rounded-xl border border-sand-200 bg-white">
+              {oferta.imagemUrl && (
+                <img
+                  src={oferta.imagemUrl}
+                  alt={oferta.produtoNome}
+                  className="w-14 h-14 rounded-lg object-cover shrink-0 border border-sand-200"
+                />
+              )}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>{oferta.produtoNome}</p>
+                <p className="font-medium text-sm truncate text-ink-900">{oferta.produtoNome}</p>
                 <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                  <span className="text-sm font-semibold" style={{ color: 'var(--color-primary)' }}>{formatarPreco(oferta.preco)}</span>
+                  <span className="text-sm font-semibold text-terracota-700">{formatarPreco(oferta.preco)}</span>
                   <Badge variant={STATUS_VARIANT[oferta.status]}>{STATUS_LABEL[oferta.status]}</Badge>
                 </div>
-                <p className="text-xs mt-0.5 flex items-center gap-1" style={{ color: 'var(--color-text-muted)' }}>
+                <p className="text-xs mt-0.5 flex items-center gap-1 text-ink-500">
                   <Clock size={11} />{formatarDataRelativa(oferta.dataPostagem)}
                   {oferta.votosAcabou > 0 && (
-                    <span className="ml-2 flex items-center gap-0.5" style={{ color: 'var(--color-danger)' }}>
+                    <span className="ml-2 flex items-center gap-0.5 text-perigo-600">
                       <XCircle size={11} /> {oferta.votosAcabou} voto{oferta.votosAcabou > 1 ? 's' : ''} "acabou"
                     </span>
                   )}
@@ -156,7 +153,7 @@ export function Dashboard() {
                   </div>
                 ) : (
                   <Button variant="ghost" size="sm" onClick={() => setConfirmandoId(oferta.id)}>
-                    <Trash2 size={15} style={{ color: 'var(--color-danger)' }} />
+                    <Trash2 size={15} className="text-perigo-600" />
                   </Button>
                 )}
               </div>
