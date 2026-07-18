@@ -13,26 +13,27 @@ import { PlaceholderFavo } from '@/components/ui/PlaceholderFavo'
 import { SeloOuro } from '@/components/ofertas/CardOuro'
 import type { OfertaResponse } from '@/types'
 
+type TipoVoto = 'ainda-tem' | 'acabou'
+
 interface CardFeedVerticalProps {
   oferta: OfertaResponse
-  onVotoAcabou?: () => void
+  onVoto?: () => void
   /** Primeiro card do feed — mostra a dica de "deslize" uma única vez. */
   primeiro?: boolean
 }
 
 /**
  * Card do feed vertical (descoberta estilo "rolar e ver o que apareceu
- * hoje") — uma oferta por tela. Full-bleed no mobile; em telas largas vira
- * um cartão no formato de celular centralizado (a "moldura" de favo escura
- * ao redor vem do fundo da linha virtualizada, em Feed.tsx).
+ * hoje") — uma oferta por tela, só no mobile (a Home usa grade em telas
+ * maiores — ver Feed.tsx). Full-bleed de propósito, sem breakpoints.
  */
-export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVerticalProps) {
+export function CardFeedVertical({ oferta, onVoto, primeiro }: CardFeedVerticalProps) {
   const navigate = useNavigate()
   const isAutenticado = useAuthStore(s => s.isAutenticado)
   const { idsFavoritos } = useFavoritos()
   const toggleFavorito = useToggleFavorito()
   const favoritado = idsFavoritos.has(oferta.id)
-  const [votando, setVotando] = useState(false)
+  const [votando, setVotando] = useState<TipoVoto | null>(null)
   const [votou, setVotou] = useState(false)
   const [imgErro, setImgErro] = useState(false)
   const ouro = ehAchadoDeOuro(oferta)
@@ -52,7 +53,7 @@ export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVer
     compartilharOferta(oferta)
   }
 
-  async function handleVotarAcabou(e: React.MouseEvent) {
+  async function handleVotar(tipo: TipoVoto, e: React.MouseEvent) {
     e.stopPropagation()
     if (!isAutenticado) {
       dispararToast('Faça login para sinalizar', 'info')
@@ -60,18 +61,20 @@ export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVer
       return
     }
     if (votou || votando) return
-    setVotando(true)
+    setVotando(tipo)
     try {
-      await ofertasService.votarAcabou(oferta.id)
+      if (tipo === 'ainda-tem') await ofertasService.votarAindaTem(oferta.id)
+      else await ofertasService.votarAcabou(oferta.id)
       setVotou(true)
-      onVotoAcabou?.()
+      dispararToast('Sinalização registrada! Obrigado pela contribuição.', 'success')
+      onVoto?.()
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 400) {
         dispararToast('Você já sinalizou esta oferta.', 'error')
         setVotou(true)
       }
     } finally {
-      setVotando(false)
+      setVotando(null)
     }
   }
 
@@ -79,14 +82,8 @@ export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVer
     <article
       onClick={() => navigate(`/oferta/${oferta.id}`)}
       className={cn(
-        'relative w-full h-full overflow-hidden cursor-pointer bg-ink-900 transition-shadow duration-300',
-        // Desktop/tablet: card no formato de celular, centralizado — a
-        // textura de favo do fundo (Feed.tsx) vira a "moldura" ao redor.
-        // max-width (não aspect-ratio) trava a largura de forma previsível
-        // em qualquer navegador — aspect-ratio + width:auto num bloco
-        // normal não encolhe de forma confiável.
-        'md:max-w-[430px] md:h-[92%] md:my-[4%] md:mx-auto md:rounded-[28px] md:shadow-2xl md:shadow-black/60',
-        ouro ? 'ring-4 ring-inset ring-mel-400/80' : 'md:ring-1 md:ring-white/10'
+        'relative w-full h-full overflow-hidden cursor-pointer bg-ink-900',
+        ouro && 'ring-4 ring-inset ring-mel-400/80'
       )}
     >
       {oferta.imagemUrl && !imgErro ? (
@@ -119,47 +116,59 @@ export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVer
       )}
 
       {/* Trilho de ações — lado direito */}
-      <div className="absolute right-3 bottom-28 flex flex-col items-center gap-3.5 z-10">
+      <div className="absolute right-3 bottom-28 flex flex-col items-center gap-3 z-10">
         <button
           onClick={handleFavoritar}
           disabled={toggleFavorito.isPending}
           className={cn(
-            'w-14 h-14 rounded-full flex flex-col items-center justify-center text-white backdrop-blur-sm transition-all active:scale-90',
+            'w-12 h-12 rounded-full flex flex-col items-center justify-center text-white backdrop-blur-sm transition-all active:scale-90',
             favoritado ? 'bg-perigo-500 shadow-lg shadow-perigo-500/50' : 'bg-white/15 hover:bg-white/25'
           )}
           title={favoritado ? 'Remover dos salvos' : 'Salvar'}
         >
           <Heart
-            size={24}
+            size={22}
             fill={favoritado ? '#fff' : 'none'}
             className={favoritado ? 'motion-safe:animate-pulsar' : ''}
           />
         </button>
         <button
           onClick={handleCompartilhar}
-          className="w-14 h-14 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-all hover:bg-white/25 active:scale-90"
+          className="w-12 h-12 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-all hover:bg-white/25 active:scale-90"
           title="Compartilhar"
         >
-          <Share2 size={22} />
+          <Share2 size={20} />
         </button>
         <button
-          onClick={handleVotarAcabou}
-          disabled={votou || votando}
+          onClick={e => handleVotar('ainda-tem', e)}
+          disabled={votou || votando !== null}
           className={cn(
-            'w-14 h-14 rounded-full flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm text-white text-[11px] font-bold transition-all active:scale-90 disabled:opacity-70',
+            'w-12 h-12 rounded-full flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm text-white text-[11px] font-bold transition-all active:scale-90 disabled:opacity-70',
+            votou ? 'bg-mandacaru-600 shadow-lg shadow-mandacaru-600/50' : 'bg-white/15 hover:bg-white/25'
+          )}
+          title="Sinalizar que ainda tem"
+        >
+          <ThumbsUp size={18} />
+          {oferta.votosAindaTem > 0 && oferta.votosAindaTem}
+        </button>
+        <button
+          onClick={e => handleVotar('acabou', e)}
+          disabled={votou || votando !== null}
+          className={cn(
+            'w-12 h-12 rounded-full flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm text-white text-[11px] font-bold transition-all active:scale-90 disabled:opacity-70',
             votou ? 'bg-perigo-600 shadow-lg shadow-perigo-600/50' : 'bg-white/15 hover:bg-white/25'
           )}
           title="Sinalizar que acabou"
         >
-          <ThumbsDown size={20} />
+          <ThumbsDown size={18} />
           {oferta.votosAcabou > 0 && oferta.votosAcabou}
         </button>
         <button
           onClick={e => { e.stopPropagation(); navigate(`/oferta/${oferta.id}`) }}
-          className="w-14 h-14 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-all hover:bg-white/25 active:scale-90"
+          className="w-12 h-12 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-all hover:bg-white/25 active:scale-90"
           title="Ver detalhes"
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={22} />
         </button>
       </div>
 
@@ -172,7 +181,7 @@ export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVer
           </span>
         </div>
 
-        <h2 className="font-display text-2xl md:text-3xl font-bold leading-tight text-white line-clamp-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.6)]">
+        <h2 className="font-display text-2xl font-bold leading-tight text-white line-clamp-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.6)]">
           {oferta.produtoNome}
         </h2>
 
