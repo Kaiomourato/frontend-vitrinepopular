@@ -10,10 +10,7 @@ import { OfertaGridVirtualizado } from '@/components/ofertas/OfertaGridVirtualiz
 
 const PAGE_SIZE = 12
 
-// Home — cabeçalho navy com busca embutida (igual à HomeScreen do design
-// system), chips de categoria, lojas cadastradas e a grade de achados.
-// Mesma composição em qualquer tamanho de tela — só a grade abaixo muda de
-// colunas (useColunasGrid, dentro de OfertaGridVirtualizado).
+
 export function Feed() {
   const queryClient = useQueryClient()
   const {
@@ -106,14 +103,14 @@ function HomeHeader() {
       </div>
 
       <form onSubmit={handleBusca} className="relative container-app !px-0 flex items-center gap-2 bg-white rounded-full h-[50px] pl-[18px] pr-1.5 shadow-sm">
-        <Search size={20} className="text-terracota-500 shrink-0" />
+        <Search size={20} className="text-terracota-500 shrink-0 ml-3" />
         <input
           value={busca}
           onChange={e => setBusca(e.target.value)}
           placeholder="O que você procura hoje?"
           className="flex-1 min-w-0 h-full outline-none border-none bg-transparent text-[15px] font-medium text-ink-900 placeholder:text-ink-500 placeholder:font-normal"
         />
-        <button type="submit" className="shrink-0 h-[38px] px-[18px] rounded-full bg-terracota-500 text-white font-bold text-sm transition-colors hover:bg-terracota-600">
+        <button type="submit" className="shrink-0 h-[38px] px-[20px] rounded-full bg-terracota-500 text-white font-bold text-sm transition-colors hover:bg-terracota-100 mr-3">
           Buscar
         </button>
       </form>
