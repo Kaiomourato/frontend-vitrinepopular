@@ -137,9 +137,9 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
           className="flex items-center gap-1 text-xs font-semibold transition-colors hover:underline text-left text-terracota-700"
         >
           <MapPin size={11} className="shrink-0" />
-          <span className="truncate">{oferta.loja.nome}</span>
+          <span className="truncate min-w-0 flex-1">{oferta.loja.nome}</span>
           {oferta.loja.endereco && (
-            <span className="truncate hidden sm:inline text-ink-500 font-normal">• {oferta.loja.endereco}</span>
+            <span className="truncate min-w-0 hidden sm:inline text-ink-500 font-normal">• {oferta.loja.endereco}</span>
           )}
         </button>
 

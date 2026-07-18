@@ -82,7 +82,10 @@ export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVer
         'relative w-full h-full overflow-hidden cursor-pointer bg-ink-900 transition-shadow duration-300',
         // Desktop/tablet: card no formato de celular, centralizado — a
         // textura de favo do fundo (Feed.tsx) vira a "moldura" ao redor.
-        'md:w-auto md:aspect-[9/16] md:h-[88%] md:mx-auto md:my-[6%] md:rounded-[28px] md:shadow-2xl md:shadow-black/60',
+        // max-width (não aspect-ratio) trava a largura de forma previsível
+        // em qualquer navegador — aspect-ratio + width:auto num bloco
+        // normal não encolhe de forma confiável.
+        'md:max-w-[430px] md:h-[92%] md:my-[4%] md:mx-auto md:rounded-[28px] md:shadow-2xl md:shadow-black/60',
         ouro ? 'ring-4 ring-inset ring-mel-400/80' : 'md:ring-1 md:ring-white/10'
       )}
     >
@@ -179,10 +182,10 @@ export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVer
 
         <button
           onClick={e => { e.stopPropagation(); navigate(`/loja/${oferta.loja.id}`) }}
-          className="flex items-center gap-1 text-sm font-bold text-mel-300 text-left hover:underline w-fit"
+          className="flex items-center gap-1 max-w-full text-sm font-bold text-mel-300 text-left hover:underline"
         >
           <MapPin size={13} className="shrink-0" />
-          <span className="truncate">{oferta.loja.nome}</span>
+          <span className="truncate min-w-0">{oferta.loja.nome}</span>
         </button>
 
         {oferta.votosAindaTem > 0 && (
