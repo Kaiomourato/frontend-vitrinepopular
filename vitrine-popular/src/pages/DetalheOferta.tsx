@@ -86,48 +86,58 @@ export function DetalheOferta() {
 
   return (
     <div className="container-app py-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-1.5 text-sm mb-6 transition-opacity hover:opacity-70 text-ink-700"
-      >
-        <ArrowLeft size={16} /> Voltar
-      </button>
-
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-        <div className="rounded-xl overflow-hidden aspect-square border border-sand-200 bg-mel-50">
+        <div className="relative rounded-xl overflow-hidden aspect-square border border-sand-200 bg-mel-50">
           {oferta.imagemUrl && (
             <img src={oferta.imagemUrl} alt={oferta.produtoNome} className="w-full h-full object-cover" />
           )}
+
+          <div className="absolute top-3 inset-x-3 flex items-center justify-between">
+            <button
+              onClick={() => navigate(-1)}
+              aria-label="Voltar"
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm text-ink-900 transition-transform active:scale-90"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCompartilhar}
+                aria-label="Compartilhar"
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm text-ink-900 transition-transform active:scale-90"
+              >
+                <Share2 size={17} />
+              </button>
+              {isAutenticado && (
+                <button
+                  onClick={handleFavoritar}
+                  disabled={toggleFavorito.isPending}
+                  aria-label={favoritado ? 'Remover dos salvos' : 'Salvar'}
+                  className="w-10 h-10 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm transition-transform active:scale-90"
+                >
+                  <Heart
+                    size={17}
+                    className={favoritado ? 'motion-safe:animate-pulsar' : ''}
+                    fill={favoritado ? 'var(--color-terracota-500)' : 'none'}
+                    stroke={favoritado ? 'var(--color-terracota-500)' : 'var(--color-ink-700)'}
+                  />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="absolute bottom-3 left-3 right-3 flex items-center gap-1.5 flex-wrap">
+            {ouro && <SeloOuro />}
+            <Badge variant="primary">{oferta.categoria.nome}</Badge>
+            {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
+            {oferta.status === 'EXPIRADA' && <Badge variant="warning">Expirada</Badge>}
+            {oferta.status === 'REMOVIDA' && <Badge variant="danger">Removida</Badge>}
+          </div>
         </div>
 
         <div className="flex flex-col gap-5">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-start gap-2 flex-wrap">
-              {ouro && <SeloOuro />}
-              <Badge variant="primary">{oferta.categoria.nome}</Badge>
-              {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
-              {oferta.status === 'EXPIRADA' && <Badge variant="warning">Expirada</Badge>}
-              {oferta.status === 'REMOVIDA' && <Badge variant="danger">Removida</Badge>}
-            </div>
-            {isAutenticado && (
-              <button
-                onClick={handleFavoritar}
-                disabled={toggleFavorito.isPending}
-                className="w-9 h-9 rounded-full flex items-center justify-center border border-sand-200 bg-white shrink-0 transition-transform active:scale-90"
-                title={favoritado ? 'Remover dos salvos' : 'Salvar'}
-              >
-                <Heart
-                  size={16}
-                  className={favoritado ? 'motion-safe:animate-pulsar' : ''}
-                  fill={favoritado ? 'var(--color-perigo-600)' : 'none'}
-                  stroke={favoritado ? 'var(--color-perigo-600)' : 'var(--color-ink-700)'}
-                />
-              </button>
-            )}
-          </div>
-
           <div>
-            <h1 className="font-display text-display-md font-bold leading-tight text-ink-900">
+            <h1 className="font-display text-display-md font-extrabold leading-tight text-ink-900">
               {oferta.produtoNome}
             </h1>
             {oferta.descricao && (
@@ -138,7 +148,7 @@ export function DetalheOferta() {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <p className="inline-flex w-fit items-center font-display text-display-lg font-bold text-white px-4 py-1.5 rounded-xl bg-gradient-to-r from-terracota-500 to-queimado-500 shadow-md shadow-terracota-500/30">
+            <p className="font-rounded text-display-lg font-bold text-terracota-700">
               {formatarPreco(oferta.preco)}
             </p>
             {oferta.votosAindaTem > 0 && (
@@ -151,10 +161,10 @@ export function DetalheOferta() {
 
           <Link
             to={`/loja/${oferta.loja.id}`}
-            className="flex flex-col gap-1 p-4 rounded-lg border-2 border-terracota-100 bg-terracota-50 transition-colors hover:border-terracota-400"
+            className="flex flex-col gap-1 p-4 rounded-xl border-[1.5px] border-terracota-100 bg-terracota-50 transition-colors hover:border-terracota-400"
           >
-            <span className="text-xs font-semibold uppercase tracking-wide text-terracota-600">Vendido por</span>
-            <span className="font-bold text-ink-900">{oferta.loja.nome}</span>
+            <span className="text-[11px] font-bold uppercase tracking-wide text-terracota-600">Vendido por</span>
+            <span className="font-display font-extrabold text-ink-900">{oferta.loja.nome}</span>
             {oferta.loja.endereco && (
               <span className="flex items-center gap-1 text-sm text-ink-700">
                 <MapPin size={13} /> {oferta.loja.endereco}
@@ -178,14 +188,14 @@ export function DetalheOferta() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 h-12 rounded-lg font-medium text-base text-white bg-whatsapp transition-opacity hover:opacity-90"
+                className="flex items-center justify-center gap-2 h-12 rounded-full font-bold text-base text-white bg-whatsapp shadow-md transition-opacity hover:opacity-90"
               >
                 <MessageCircle size={20} />
                 Falar no WhatsApp
               </a>
             )}
             <div>
-              <p className="text-xs font-medium mb-2 text-ink-500">
+              <p className="text-xs font-bold mb-2 text-ink-500">
                 Esse achado ainda está disponível?
               </p>
               <div className="flex gap-2">
@@ -209,9 +219,6 @@ export function DetalheOferta() {
                   <ThumbsDown size={16} />
                   Acabou ({oferta.votosAcabou})
                 </Button>
-                <Button variant="ghost" onClick={handleCompartilhar}>
-                  <Share2 size={16} />
-                </Button>
               </div>
             </div>
           </div>
@@ -224,7 +231,6 @@ export function DetalheOferta() {
 function DetalheOfertaSkeleton() {
   return (
     <div className="container-app py-6 animate-pulse">
-      <div className="h-4 w-16 rounded mb-6 bg-sand-100" />
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
         <div className="rounded-xl aspect-square bg-sand-100" />
         <div className="flex flex-col gap-5">

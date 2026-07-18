@@ -59,7 +59,7 @@ export function CardOuro({ ativo, children, className }: CardOuroProps) {
         className
       )}
       style={{
-        boxShadow: '0 8px 22px -6px rgba(224, 163, 16, 0.35)',
+        boxShadow: '0 8px 22px -6px rgba(242, 160, 19, 0.35)',
         transform: podeInclinar ? 'rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))' : undefined,
       }}
     >

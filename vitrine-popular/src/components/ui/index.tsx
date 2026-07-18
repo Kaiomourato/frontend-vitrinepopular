@@ -14,7 +14,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-ink-900">
+          <label htmlFor={inputId} className="text-[13px] font-bold text-ink-900">
             {label}
           </label>
         )}
@@ -22,10 +22,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'w-full h-10 rounded-[10px] border text-sm px-3 transition-all outline-none appearance-none cursor-pointer text-ink-900',
+            'w-full h-12 rounded-lg border-[1.5px] text-[15px] px-3.5 transition-all outline-none appearance-none cursor-pointer text-ink-900',
             error
               ? 'border-perigo-600 bg-perigo-50'
-              : 'border-sand-200 bg-white focus:border-terracota-500 focus:ring-2 focus:ring-terracota-500/15',
+              : 'border-sand-300 bg-white hover:border-sand-400 focus:border-terracota-500 focus:ring-[3px] focus:ring-terracota-500/35',
             className
           )}
           {...props}
@@ -55,7 +55,7 @@ export function Badge({ children, variant = 'default', className }: BadgeProps) 
     danger:  'bg-perigo-600 text-white',
   }
   return (
-    <span className={cn('inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm', variants[variant], className)}>
+    <span className={cn('inline-flex items-center gap-1 text-[11.5px] font-bold tracking-wide px-2.5 py-1 rounded-full shadow-sm', variants[variant], className)}>
       {children}
     </span>
   )
@@ -88,7 +88,7 @@ export function Card({ children, className, onClick }: CardProps) {
     <div
       onClick={onClick}
       className={cn(
-        'rounded-[14px] border bg-white transition-all border-sand-200',
+        'rounded-xl border bg-white shadow-sm transition-all border-sand-200',
         onClick && 'cursor-pointer hover:shadow-md hover:-translate-y-0.5',
         className
       )}
@@ -115,7 +115,7 @@ export function EmptyState({ icon, titulo, descricao, acao }: EmptyStateProps) {
         </div>
       )}
       <div>
-        <p className="font-medium text-lg text-ink-900">{titulo}</p>
+        <p className="font-display font-bold text-lg text-ink-900">{titulo}</p>
         {descricao && <p className="text-sm mt-1 text-ink-700">{descricao}</p>}
       </div>
       {acao}

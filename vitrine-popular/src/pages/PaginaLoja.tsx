@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { lojasService } from '@/services/lojas'
 import { ofertasService } from '@/services/ofertas'
 import { OfertaGrid, OfertaGridSkeleton } from '@/components/ofertas/OfertaGrid'
@@ -40,14 +40,10 @@ export function PaginaLoja() {
 
   return (
     <div className="container-app py-6 flex flex-col gap-6">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70 text-ink-700">
-        <ArrowLeft size={16} /> Voltar
-      </button>
-
-      <StoreHeader loja={loja} />
+      <StoreHeader loja={loja} onVoltar={() => navigate(-1)} />
 
       <div>
-        <h2 className="font-display text-display-sm font-semibold mb-4 text-ink-900">
+        <h2 className="font-display text-display-sm font-extrabold mb-4 text-ink-900">
           Achados dessa loja
         </h2>
         {loadingOfertas ? (
@@ -78,8 +74,7 @@ export function PaginaLoja() {
 function PaginaLojaSkeleton() {
   return (
     <div className="container-app py-6 flex flex-col gap-6 animate-pulse">
-      <div className="h-4 w-16 rounded bg-sand-100" />
-      <div className="rounded-xl h-32 md:h-28 bg-sand-100" />
+      <div className="rounded-2xl h-52 md:h-56 bg-sand-100" />
       <div className="h-6 w-40 rounded bg-sand-100" />
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
         {Array.from({ length: 8 }).map((_, i) => (

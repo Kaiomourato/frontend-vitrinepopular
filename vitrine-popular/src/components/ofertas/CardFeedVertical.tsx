@@ -185,7 +185,7 @@ export function CardFeedVertical({ oferta, onVoto, primeiro }: CardFeedVerticalP
           {oferta.produtoNome}
         </h2>
 
-        <p className="inline-flex w-fit items-center font-display text-display-md font-bold text-white px-4 py-1.5 rounded-xl bg-gradient-to-r from-terracota-500 to-queimado-500 ring-2 ring-white/20 shadow-lg shadow-terracota-600/50">
+        <p className="inline-flex w-fit items-center font-rounded text-display-md font-bold text-white px-4 py-1.5 rounded-xl bg-gradient-to-r from-terracota-500 to-queimado-500 ring-2 ring-white/20 shadow-lg shadow-terracota-600/50">
           {formatarPreco(oferta.preco)}
         </p>
 

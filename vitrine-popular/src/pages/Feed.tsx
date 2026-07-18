@@ -34,11 +34,16 @@ function FeedGrade() {
 
   return (
     <div className="container-app py-6 flex flex-col gap-6">
-      <div className="rounded-xl px-6 py-10 md:py-14 text-center bg-gradient-to-br from-terracota-500 via-terracota-600 to-queimado-600 shadow-lg shadow-terracota-500/20">
-        <h1 className="font-display text-display-lg font-bold mb-2 text-white">
+      <div className="relative overflow-hidden rounded-2xl px-6 py-10 md:py-14 text-center bg-ink-900 shadow-lg">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-8 -top-8 w-40 h-40 bg-mel-500/15"
+          style={{ clipPath: 'var(--hex-clip)' }}
+        />
+        <h1 className="relative font-display text-display-lg font-extrabold mb-2 text-white">
           Achados do dia
         </h1>
-        <p className="text-sm md:text-base text-terracota-50">
+        <p className="relative text-sm md:text-base text-white/75">
           O que apareceu no comércio de Picos-PI para você conferir agora.
         </p>
       </div>

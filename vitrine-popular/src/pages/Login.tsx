@@ -48,17 +48,17 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-cream-50">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 font-bold text-xl text-terracota-600">
-            <ShoppingBag size={28} /> <span className="font-display">Vitrine Popular</span>
+          <Link to="/" className="inline-flex items-center gap-2 font-display font-extrabold text-xl tracking-tight text-terracota-600">
+            <ShoppingBag size={28} /> <span className="uppercase tracking-wide">Vitrine Popular</span>
           </Link>
-          <h1 className="mt-4 font-display text-display-sm font-semibold text-ink-900">Entrar na sua conta</h1>
+          <h1 className="mt-4 font-display text-display-sm font-extrabold text-ink-900">Entrar na sua conta</h1>
           <p className="text-sm mt-1 text-ink-700">
             Não tem conta?{' '}
-            <Link to="/registro" className="font-medium text-terracota-600">Cadastre-se grátis</Link>
+            <Link to="/registro" className="font-bold text-terracota-600">Cadastre-se grátis</Link>
           </p>
         </div>
 
-        <div className="rounded-xl border border-sand-200 bg-white p-6 md:p-8 flex flex-col gap-5">
+        <div className="rounded-2xl border border-sand-200 bg-white shadow-sm p-6 md:p-8 flex flex-col gap-5">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Input
               label="E-mail"

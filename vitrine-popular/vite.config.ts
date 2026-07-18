@@ -16,8 +16,8 @@ export default defineConfig({
         name: 'Vitrine Popular',
         short_name: 'Vitrine',
         description: 'Vitrine de ofertas do comércio popular de Picos-PI',
-        theme_color: '#B14F26',
-        background_color: '#FBF9F5',
+        theme_color: '#EA6A1E',
+        background_color: '#FBF6EF',
         display: 'standalone',
         start_url: '/',
         lang: 'pt-BR',
@@ -46,6 +46,23 @@ export default defineConfig({
             options: {
               cacheName: 'static-assets',
               expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+          // Fontes de marca (Archivo/Fredoka/Space Mono) servidas via Google
+          // Fonts CDN — cacheadas após o primeiro load pra continuar
+          // disponíveis offline, já que o app é PWA.
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'google-fonts-stylesheets' },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-webfonts',
+              expiration: { maxEntries: 30, maxAgeSeconds: 365 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           // Imagens hospedadas no Cloudinary (fotos das ofertas)

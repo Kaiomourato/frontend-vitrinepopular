@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils'
 // mobile. O <Outlet /> é onde o React Router renderiza a página atual.
 export function Layout() {
   const location = useLocation()
-  // A Home é o feed vertical full-bleed — a pill de navegação flutua por
-  // cima dela (é uma pill com margem, não uma barra full-width), então essa
-  // rota não reserva o espaço de respiro que as outras telas precisam.
+  // A Home é o feed vertical full-bleed — a TabBar fica por cima dela
+  // (full-bleed já reserva a própria margem visual via scrim), então essa
+  // rota não precisa do espaço de respiro extra que as outras telas usam.
   const isFeedVertical = location.pathname === '/'
   return (
     <div className="min-h-screen flex flex-col bg-cream-50">

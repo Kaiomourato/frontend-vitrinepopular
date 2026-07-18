@@ -35,7 +35,7 @@ export function Descobrir() {
   return (
     <div className="container-app py-6 flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-display-lg font-semibold text-ink-900">Descobrir</h1>
+        <h1 className="font-display text-display-lg font-extrabold text-ink-900">Descobrir</h1>
         <p className="text-sm md:text-base mt-1 text-ink-700">
           Explore por categoria o que o comércio de Picos-PI tem pra oferecer.
         </p>

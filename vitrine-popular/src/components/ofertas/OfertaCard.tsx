@@ -70,7 +70,7 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
     <article
       onClick={() => navigate(`/oferta/${oferta.id}`)}
       style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
-      className="group cursor-pointer rounded-lg border border-sand-200 bg-white overflow-hidden shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 motion-safe:animate-surgir"
+      className="group cursor-pointer rounded-xl border border-sand-200 bg-white overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-[3px] motion-safe:animate-surgir"
     >
       {/* Imagem — proporção fixa para domar fotos de qualidade variável */}
       <div className="relative aspect-square overflow-hidden bg-mel-50">
@@ -87,26 +87,26 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
           <PlaceholderFavo />
         )}
 
-        <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
+        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5">
           {ouro && <SeloOuro />}
-          <span className="text-xs font-medium px-2 py-0.5 rounded-full text-white backdrop-blur-sm bg-ink-900/55">
+          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white backdrop-blur-sm bg-ink-900/55">
             {oferta.categoria.nome}
           </span>
         </div>
 
-        <div className="absolute top-2 right-2 flex items-center gap-1.5">
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
           {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
           {isAutenticado && (
             <button
               onClick={handleFavoritar}
               disabled={toggleFavorito.isPending}
-              className="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm bg-ink-900/45 transition-transform active:scale-90"
+              className="w-9 h-9 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm transition-transform active:scale-90"
               title={favoritado ? 'Remover dos salvos' : 'Salvar'}
             >
               <Heart
-                size={15}
-                fill={favoritado ? '#fff' : 'none'}
-                stroke="#fff"
+                size={16}
+                fill={favoritado ? 'var(--color-terracota-500)' : 'none'}
+                stroke={favoritado ? 'var(--color-terracota-500)' : 'var(--color-ink-500)'}
                 className={favoritado ? 'motion-safe:animate-pulsar' : ''}
               />
             </button>
@@ -115,7 +115,7 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
       </div>
 
       {/* Conteúdo */}
-      <div className="p-3 flex flex-col gap-2.5">
+      <div className="p-3 flex flex-col gap-2">
         <div>
           <p className="font-bold text-[15px] leading-tight line-clamp-2 text-ink-900">
             {oferta.produtoNome}
@@ -127,14 +127,14 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
           )}
         </div>
 
-        {/* Preço em destaque — tag de oferta, não texto corrido */}
-        <p className="inline-flex w-fit items-center font-display text-display-sm font-bold text-white px-3 py-1 rounded-lg bg-gradient-to-r from-terracota-500 to-queimado-500 shadow-sm shadow-terracota-500/30">
+        {/* Preço em destaque — número grande na fonte arredondada, sem badge/gradiente */}
+        <p className="font-rounded font-bold text-[19px] leading-none text-terracota-700">
           {formatarPreco(oferta.preco)}
         </p>
 
         <button
           onClick={e => { e.stopPropagation(); navigate(`/loja/${oferta.loja.id}`) }}
-          className="flex items-center gap-1 text-xs font-semibold transition-colors hover:underline text-left text-terracota-700"
+          className="flex items-center gap-1 text-[11.5px] font-bold transition-colors hover:underline text-left text-terracota-600"
         >
           <MapPin size={11} className="shrink-0" />
           <span className="truncate min-w-0 flex-1">{oferta.loja.nome}</span>

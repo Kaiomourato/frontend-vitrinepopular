@@ -59,14 +59,19 @@ export function Ranking() {
 
   return (
     <div className="container-app py-6 flex flex-col gap-6">
-      <div className="rounded-xl px-6 py-8 md:py-12 text-center bg-gradient-to-br from-terracota-500 via-terracota-600 to-queimado-600 shadow-lg shadow-terracota-500/20">
-        <div className="flex justify-center mb-2">
-          <Trophy size={28} className="text-mel-300" />
+      <div className="relative overflow-hidden rounded-2xl px-6 py-8 md:py-12 text-center bg-ink-900 shadow-lg">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-10 -bottom-10 w-44 h-44 bg-mel-500/15"
+          style={{ clipPath: 'var(--hex-clip)' }}
+        />
+        <div className="relative flex justify-center mb-2">
+          <Trophy size={28} className="text-mel-400" />
         </div>
-        <h1 className="font-display text-display-lg font-bold mb-2 text-white">
+        <h1 className="relative font-display text-display-lg font-extrabold mb-2 text-white">
           Ranking da Vitrine
         </h1>
-        <p className="text-sm md:text-base text-terracota-50">
+        <p className="relative text-sm md:text-base text-white/75">
           Quem mais contribui, o que mais faz sucesso no comércio de Picos-PI.
         </p>
       </div>
@@ -77,7 +82,7 @@ export function Ranking() {
             key={value}
             onClick={() => setAba(value)}
             className={cn(
-              'flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors',
+              'flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold border-b-2 -mb-px transition-colors',
               aba === value ? 'border-terracota-500 text-terracota-700' : 'border-transparent text-ink-500 hover:text-ink-700'
             )}
           >

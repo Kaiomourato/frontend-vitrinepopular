@@ -21,7 +21,7 @@ export function OfertaGridSkeleton({ quantidade = 10 }: { quantidade?: number })
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
       {Array.from({ length: quantidade }).map((_, i) => (
-        <div key={i} className="rounded-lg border border-sand-200 overflow-hidden">
+        <div key={i} className="rounded-xl border border-sand-200 overflow-hidden">
           <div className="aspect-square animate-pulse bg-sand-100" />
           <div className="p-3 flex flex-col gap-2">
             <div className="h-4 rounded animate-pulse w-3/4 bg-sand-100" />

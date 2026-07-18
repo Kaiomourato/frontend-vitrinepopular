@@ -3,9 +3,9 @@ import { cn } from '@/lib/utils'
 import type { Medalha } from '@/types'
 
 const TIER: Record<Medalha, { bg: string; text: string; label: string }> = {
-  OURO:   { bg: 'bg-mel-500',      text: 'text-mel-900',      label: 'Ouro' },
-  PRATA:  { bg: 'bg-sand-300',     text: 'text-ink-900',      label: 'Prata' },
-  BRONZE: { bg: 'bg-queimado-400', text: 'text-queimado-900', label: 'Bronze' },
+  OURO:   { bg: 'bg-mel-500',       text: 'text-mel-900',  label: 'Ouro' },
+  PRATA:  { bg: 'bg-sand-300',      text: 'text-ink-900',  label: 'Prata' },
+  BRONZE: { bg: 'bg-terracota-600', text: 'text-white',    label: 'Bronze' },
 }
 
 interface MedalBadgeProps {
@@ -28,7 +28,7 @@ export function MedalBadge({ medalha, tamanho = 'sm', comLabel = false, classNam
         style={{
           width: dimensao,
           height: dimensao,
-          clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+          clipPath: 'var(--hex-clip)',
         }}
         title={tier.label}
       >

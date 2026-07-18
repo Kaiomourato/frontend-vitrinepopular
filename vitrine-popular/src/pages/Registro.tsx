@@ -185,14 +185,14 @@ export function Registro() {
       <div className="w-full max-w-md">
 
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 font-bold text-xl text-terracota-600">
-            <ShoppingBag size={28} /> <span className="font-display">Vitrine Popular</span>
+          <Link to="/" className="inline-flex items-center gap-2 font-display font-extrabold text-xl tracking-tight text-terracota-600">
+            <ShoppingBag size={28} /> <span className="uppercase tracking-wide">Vitrine Popular</span>
           </Link>
-          <h1 className="mt-4 font-display text-display-sm font-semibold text-ink-900">{titulo()}</h1>
+          <h1 className="mt-4 font-display text-display-sm font-extrabold text-ink-900">{titulo()}</h1>
           {passo === 1 && (
             <p className="text-sm mt-1 text-ink-700">
               Já tem conta?{' '}
-              <Link to="/login" className="font-medium text-terracota-600">Entrar</Link>
+              <Link to="/login" className="font-bold text-terracota-600">Entrar</Link>
             </p>
           )}
         </div>
@@ -211,7 +211,7 @@ export function Registro() {
           </div>
         )}
 
-        <div className="rounded-xl border border-sand-200 bg-white p-6 md:p-8">
+        <div className="rounded-2xl border border-sand-200 bg-white shadow-sm p-6 md:p-8">
 
           {/* ══ PASSO 1 ══ */}
           {passo === 1 && (

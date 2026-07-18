@@ -1,90 +1,101 @@
 @import "tailwindcss";
 
-/* Fontes self-hospedadas (variable fonts — 1 arquivo cobre todos os pesos usados) */
-@import "@fontsource-variable/fraunces/standard.css"; /* eixo opsz+wght, sem soft/wonk — mais leve */
+/* Fonte de corpo self-hospedada (variable font — 1 arquivo cobre todos os pesos usados) */
 @import "@fontsource-variable/plus-jakarta-sans";
+
+/* Fontes de marca (Google Fonts CDN) — Archivo (display), Fredoka (números/
+   preços/pontos), Space Mono (códigos). Plus Jakarta Sans continua
+   auto-hospedada acima. */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Fredoka:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 /* ============================================================
    Design tokens — Vitrine Popular
-   Paleta editorial com identidade sutil de Picos-PI: terracota,
-   laranja queimado, amarelo mel e verde mandacaru sobre neutros
-   quentes. Todos os pares texto/fundo abaixo foram calculados
-   para contraste AA (≥4.5:1 texto normal, ≥3:1 texto grande) —
-   reconfirmar com devtools ao usar uma combinação nova.
+   Identidade derivada do Design System importado (claude.ai/design):
+   laranja como marca/CTA primário, mel/âmbar para gamificação e o motivo
+   hexagonal do favo, verde para disponibilidade/sucesso, navy como tinta e
+   creme como fundo — inspirado em Picos-PI, referência na produção de mel.
+   Os nomes de classe legados (terracota/queimado/mel/mandacaru/sand/ink)
+   são mantidos para não exigir troca de classes em cada tela; só os valores
+   hex mudaram. Todos os pares texto/fundo abaixo foram calculados para
+   contraste AA (≥4.5:1 texto normal, ≥3:1 texto grande) — reconfirmar com
+   devtools ao usar uma combinação nova.
    ============================================================ */
 @theme {
-  /* Terracota — marca, CTA primário, preço em destaque */
-  --color-terracota-50:  #FBEDE7;
-  --color-terracota-100: #F5D8C9;
-  --color-terracota-200: #E9B594;
-  --color-terracota-300: #DB8F62;
-  --color-terracota-400: #C96B3E;
-  --color-terracota-500: #B14F26; /* base — fundo de botão primário (com texto branco) */
-  --color-terracota-600: #9A3E1C; /* hover */
-  --color-terracota-700: #7E3117; /* texto sobre branco/creme — preço, links */
-  --color-terracota-800: #642712;
-  --color-terracota-900: #4D1E0E;
+  /* Laranja — marca, CTA primário, preço em destaque (rampa --vp-orange) */
+  --color-terracota-50:  #FEF3EA;
+  --color-terracota-100: #FBE0CC;
+  --color-terracota-200: #F7C199;
+  --color-terracota-300: #F2A066;
+  --color-terracota-400: #EE8340;
+  --color-terracota-500: #EA6A1E; /* base — fundo de botão primário (com texto branco) */
+  --color-terracota-600: #D2571A; /* hover */
+  --color-terracota-700: #B0470F; /* texto sobre branco/creme — preço, links */
+  --color-terracota-800: #85370E;
+  --color-terracota-900: #5E260A;
 
-  /* Laranja queimado — acentos secundários, chips ativos, hover de destaque */
-  --color-queimado-50:  #FFF1E6;
-  --color-queimado-100: #FFDEC2;
-  --color-queimado-200: #FFBD8A;
-  --color-queimado-300: #FF9A52;
-  --color-queimado-400: #F27C2E;
-  --color-queimado-500: #DD611A;
-  --color-queimado-600: #B84E14;
-  --color-queimado-700: #933D10;
-  --color-queimado-800: #6F2E0C;
-  --color-queimado-900: #4C1F08;
+  /* Mel/âmbar — motivo hexagonal, gamificação, acentos secundários e chips
+     ativos (rampa --vp-honey). "queimado" e "mel" compartilham a mesma
+     rampa: mel é o nome semântico correto em português, queimado é a
+     segunda cor dos gradientes legados (laranja → mel). */
+  --color-queimado-50:  #FFF8EA;
+  --color-queimado-100: #FDEFCB;
+  --color-queimado-200: #FCE0A0;
+  --color-queimado-300: #FBD07A;
+  --color-queimado-400: #F6B739;
+  --color-queimado-500: #F2A013;
+  --color-queimado-600: #D9860A;
+  --color-queimado-700: #B36B08;
+  --color-queimado-800: #8C5306;
+  --color-queimado-900: #603804;
 
-  /* Amarelo mel — placeholder em favo, selos de novidade */
-  --color-mel-50:  #FFF8E1;
-  --color-mel-100: #FFECB3;
-  --color-mel-200: #FFDE80;
-  --color-mel-300: #FFCF4D;
-  --color-mel-400: #F7BB2A;
-  --color-mel-500: #E0A310;
-  --color-mel-600: #BD8709;
-  --color-mel-700: #966B08;
-  --color-mel-800: #714F06; /* texto de aviso sobre claro — ~7.4:1 */
-  --color-mel-900: #4D3504;
+  --color-mel-50:  #FFF8EA;
+  --color-mel-100: #FDEFCB;
+  --color-mel-200: #FCE0A0;
+  --color-mel-300: #FBD07A;
+  --color-mel-400: #F6B739;
+  --color-mel-500: #F2A013;
+  --color-mel-600: #D9860A;
+  --color-mel-700: #B36B08;
+  --color-mel-800: #8C5306; /* texto de aviso sobre claro */
+  --color-mel-900: #603804;
 
-  /* Verde mandacaru — disponibilidade, sucesso */
-  --color-mandacaru-50:  #EFF6EA;
-  --color-mandacaru-100: #D9EBCB;
-  --color-mandacaru-200: #B3D89C;
-  --color-mandacaru-300: #8AC26C;
-  --color-mandacaru-400: #66A847;
-  --color-mandacaru-500: #4C8A32;
-  --color-mandacaru-600: #3B6E27; /* texto/ícone de sucesso sobre claro — ~6.1:1 */
-  --color-mandacaru-700: #2E551E;
-  --color-mandacaru-800: #223F16;
-  --color-mandacaru-900: #172B0F;
+  /* Verde — disponibilidade, sucesso, destaque (rampa --vp-green) */
+  --color-mandacaru-50:  #E7F6EE;
+  --color-mandacaru-100: #C4EAD5;
+  --color-mandacaru-200: #9BDCB8;
+  --color-mandacaru-300: #6FCE9C;
+  --color-mandacaru-400: #35B877;
+  --color-mandacaru-500: #1FA463;
+  --color-mandacaru-600: #158A54; /* texto/ícone de sucesso sobre claro */
+  --color-mandacaru-700: #0F6E43;
+  --color-mandacaru-800: #0A5533;
+  --color-mandacaru-900: #063B23;
 
-  /* Vermelho-tijolo — erro/perigo (distinto do terracota de marca) */
-  --color-perigo-50:  #FCEDEC;
-  --color-perigo-500: #C6362D;
-  --color-perigo-600: #B3261E; /* ~6.5:1 sobre branco */
-  --color-perigo-700: #8C1E17;
+  /* Vermelho — erro/perigo (--vp-danger) */
+  --color-perigo-50:  #FBE4E4;
+  --color-perigo-500: #E23B3B;
+  --color-perigo-600: #C62F2F; /* ~5.9:1 sobre branco */
+  --color-perigo-700: #A32424;
 
-  /* Neutros quentes */
-  --color-cream-50:  #FBF9F5; /* fundo de página */
-  --color-sand-100:  #F2EEE6; /* hover de superfície */
-  --color-sand-200:  #E7E1D5; /* borda */
-  --color-sand-300:  #D6CCB8; /* borda forte */
-  --color-ink-900:   #241C15; /* texto primário */
-  --color-ink-700:   #5B5147; /* texto secundário — ~7.7:1 */
-  --color-ink-500:   #79705F; /* texto muted — ~4.9:1, mínimo AA */
+  /* Neutros quentes (--vp-sand / --vp-cream) */
+  --color-cream-50:  #FBF6EF; /* fundo de página */
+  --color-sand-100:  #F6EFE6; /* hover de superfície */
+  --color-sand-200:  #ECE2D5; /* borda */
+  --color-sand-300:  #DCCDBB; /* borda forte */
+  --color-sand-400:  #BEAD98; /* borda forte (hover) */
+  --color-sand-500:  #8C7E6C; /* placeholder */
+  --color-sand-600:  #6B5F50;
+  --color-ink-900:   #1A2C38; /* texto primário — navy da marca */
+  --color-ink-700:   #24404F; /* texto secundário */
+  --color-ink-500:   var(--color-sand-600); /* texto muted — tom sand, ~4.9:1 mínimo AA */
 
   /* Marca externa (WhatsApp) — mantido fora das rampas editoriais de propósito */
   --color-whatsapp:       #25D366;
   --color-whatsapp-hover: #1DA851;
 
-  /* --- Aliases legados ---------------------------------------------------
-     Mantidos por compatibilidade enquanto cada tela é migrada (fases 2–10
-     do redesign). Novo código deve preferir os tokens nomeados acima
-     (bg-terracota-500, text-ink-700 etc.); estes aliases serão removidos
-     depois que nenhum componente mais os referenciar. */
+  /* --- Aliases semânticos ---------------------------------------------
+     Usados por componentes que preferem nome de papel (bg/surface/border)
+     em vez da rampa crua. */
   --color-primary:        var(--color-terracota-500);
   --color-primary-hover:  var(--color-terracota-600);
   --color-primary-light:  var(--color-terracota-50);
@@ -103,10 +114,13 @@
   --color-danger:         var(--color-perigo-600);
   --color-danger-light:   var(--color-perigo-50);
 
-  /* Tipografia — display editorial (Fraunces) + corpo neutro (Plus Jakarta Sans) */
-  --font-display: 'Fraunces Variable', ui-serif, Georgia, 'Times New Roman', serif;
+  /* Tipografia — Archivo (display, punch de marketplace) + Plus Jakarta
+     Sans (corpo) + Fredoka (números/preços/pontos, "font-rounded") +
+     Space Mono (códigos/cupons) */
+  --font-display: 'Archivo', 'Plus Jakarta Sans Variable', system-ui, sans-serif;
   --font-sans:    'Plus Jakarta Sans Variable', system-ui, -apple-system, sans-serif;
-  --font-mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-rounded: 'Fredoka', 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --font-mono:    'Space Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Escala de tamanhos editoriais (fluida) — para títulos/preços de destaque */
   --text-display-sm: 1.375rem;
@@ -116,23 +130,32 @@
   --text-display-lg: clamp(1.875rem, 5vw, 3rem);
   --text-display-lg--line-height: 1.1;
 
-  /* Raios de borda */
+  /* Raios de borda — já batem com a escala do design system (6/10/14/20px) */
   --radius-sm:   6px;
   --radius-md:   10px;
   --radius-lg:   14px;
   --radius-xl:   20px;
   --radius-full: 9999px;
 
-  /* Sombras com tom quente (em vez de preto puro) */
-  --shadow-sm: 0 1px 2px 0 rgb(90 46 20 / 0.06);
-  --shadow-md: 0 4px 10px -2px rgb(90 46 20 / 0.10), 0 2px 4px -2px rgb(90 46 20 / 0.06);
-  --shadow-lg: 0 12px 24px -6px rgb(90 46 20 / 0.14), 0 4px 8px -4px rgb(90 46 20 / 0.08);
+  /* Sombras com base navy quente (nunca cinza neutro) + sombras de marca
+     coloridas para CTAs preenchidos */
+  --shadow-sm: 0 2px 6px -1px rgb(26 44 56 / 0.10);
+  --shadow-md: 0 8px 20px -6px rgb(26 44 56 / 0.16);
+  --shadow-lg: 0 20px 44px -14px rgb(26 44 56 / 0.24);
+  --shadow-brand: 0 12px 26px -10px rgb(234 106 30 / 0.50);
+  --shadow-green: 0 12px 26px -10px rgb(31 164 99 / 0.42);
 
   /* Microinterações — só transform/opacity, 150–300ms/curtas, sempre
      atrás de motion-safe: nos componentes que as usam */
   --animate-surgir: surgir 0.4s ease-out backwards;
   --animate-pulsar: pulsar 0.35s ease-out;
   --animate-toast-in: toast-in 0.25s ease-out;
+}
+
+/* Motivo do mel — hexágono pointy-top via clip-path, reusado em avatares,
+   logos de loja e stats de gamificação. */
+:root {
+  --hex-clip: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
 @keyframes surgir {
@@ -162,18 +185,18 @@
 @layer base {
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-bg:             #1C1712;
-      --color-surface:        #262019;
-      --color-surface-hover:  #2F2820;
-      --color-border:         #3B3226;
-      --color-border-strong:  #4A3F30;
+      --color-bg:             #14202A;
+      --color-surface:        #1D2E3A;
+      --color-surface-hover:  #24404F;
+      --color-border:         #2E4451;
+      --color-border-strong:  #3E5866;
       --color-text-primary:   #F5F0E8;
-      --color-text-secondary: #C9BFAF;
-      --color-text-muted:     #948970;
-      --color-primary-light:  #3A2415;
-      --color-success-light:  #16260F;
-      --color-warning-light:  #2E2409;
-      --color-danger-light:   #2B1210;
+      --color-text-secondary: #C9D3D8;
+      --color-text-muted:     #8CA0AB;
+      --color-primary-light:  #3A2513;
+      --color-success-light:  #113322;
+      --color-warning-light:  #3A2C08;
+      --color-danger-light:   #3A1414;
     }
   }
 

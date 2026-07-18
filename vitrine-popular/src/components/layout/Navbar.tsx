@@ -38,9 +38,9 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-sand-200 bg-white">
       <div className="container-app flex items-center gap-4 h-16">
-        <Link to="/" className="flex items-center gap-2 shrink-0 font-bold text-lg tracking-tight text-terracota-600">
+        <Link to="/" className="flex items-center gap-2 shrink-0 font-display font-extrabold text-lg tracking-tight text-terracota-600">
           <ShoppingBag size={22} />
-          <span className="hidden sm:block font-display">Vitrine Popular</span>
+          <span className="hidden sm:block uppercase tracking-wide">Vitrine Popular</span>
           <span className="sm:hidden">VP</span>
         </Link>
 
@@ -77,7 +77,7 @@ export function Navbar() {
               value={busca}
               onChange={e => setBusca(e.target.value)}
               placeholder="O que você procura hoje?"
-              className="w-full h-10 pl-10 pr-4 rounded-full text-sm border border-sand-200 bg-cream-50 outline-none transition-colors focus:border-terracota-500"
+              className="w-full h-11 pl-10 pr-4 rounded-full text-[15px] border-[1.5px] border-sand-200 bg-cream-50 outline-none transition-colors focus:border-terracota-500 focus:ring-[3px] focus:ring-terracota-500/25"
             />
           </div>
         </form>
@@ -90,7 +90,7 @@ export function Navbar() {
               {usuario?.perfil === 'LOJISTA' && (
                 <Link
                   to="/oferta/nova"
-                  className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-terracota-500 text-white transition-colors hover:bg-terracota-600"
+                  className="flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full bg-terracota-500 text-white shadow-brand transition-colors hover:bg-terracota-600"
                 >
                   <Plus size={16} />
                   Nova oferta
@@ -100,7 +100,7 @@ export function Navbar() {
                 <button
                   onClick={() => setDropdownAberto(v => !v)}
                   className={cn(
-                    'flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm font-medium border border-sand-200 text-ink-900',
+                    'flex items-center gap-2 px-3 py-2 rounded-full transition-colors text-sm font-medium border-[1.5px] border-sand-200 text-ink-900',
                     dropdownAberto && 'bg-sand-100'
                   )}
                 >
@@ -110,7 +110,7 @@ export function Navbar() {
                   <span className="max-w-[120px] truncate">{usuario?.nome}</span>
                 </button>
                 {dropdownAberto && (
-                  <div className="absolute right-0 top-full mt-2 w-52 rounded-lg border border-sand-200 bg-white shadow-lg py-1 z-50">
+                  <div className="absolute right-0 top-full mt-2 w-52 rounded-xl border border-sand-200 bg-white shadow-lg py-1 z-50">
                     <div className="px-4 py-2.5 border-b border-sand-200">
                       <p className="text-sm font-medium text-ink-900">{usuario?.nome}</p>
                       <p className="text-xs text-ink-500">{usuario?.email}</p>
@@ -154,10 +154,10 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/login" className="text-sm font-medium px-4 py-2 rounded-lg border border-sand-200 text-ink-900 transition-colors hover:bg-sand-100">
+              <Link to="/login" className="text-sm font-bold px-4 py-2 rounded-full border-[1.5px] border-sand-200 text-ink-900 transition-colors hover:bg-sand-100">
                 Entrar
               </Link>
-              <Link to="/registro" className="text-sm font-medium px-4 py-2 rounded-lg bg-terracota-500 text-white transition-colors hover:bg-terracota-600">
+              <Link to="/registro" className="text-sm font-bold px-4 py-2 rounded-full bg-terracota-500 text-white shadow-brand transition-colors hover:bg-terracota-600">
                 Anunciar grátis
               </Link>
             </>
