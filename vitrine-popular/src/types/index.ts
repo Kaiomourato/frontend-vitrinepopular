@@ -15,6 +15,7 @@ export interface UsuarioResponse {
   email: string
   perfil: 'LOJISTA' | 'COLABORADOR' | 'ADMIN'
   loja: LojaVinculada | null
+  fotoUrl: string | null
 }
 
 export interface LoginResponse {

@@ -25,4 +25,13 @@ export const authService = {
 
   me: () =>
     api.get<UsuarioResponse>('/api/usuarios/me').then(r => r.data),
+
+  // Envia/substitui a foto de perfil do usuário autenticado (multipart/form-data)
+  atualizarFoto: (imagem: File) => {
+    const form = new FormData()
+    form.append('imagem', imagem)
+    return api.patch<UsuarioResponse>('/api/usuarios/foto', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(r => r.data)
+  },
 }

@@ -104,8 +104,12 @@ export function Navbar() {
                     dropdownAberto && 'bg-sand-100'
                   )}
                 >
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-terracota-50 text-terracota-700">
-                    {usuario?.nome?.[0]?.toUpperCase()}
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-terracota-50 text-terracota-700 overflow-hidden">
+                    {usuario?.fotoUrl ? (
+                      <img src={usuario.fotoUrl} alt={usuario.nome} className="w-full h-full object-cover" />
+                    ) : (
+                      usuario?.nome?.[0]?.toUpperCase()
+                    )}
                   </div>
                   <span className="max-w-[120px] truncate">{usuario?.nome}</span>
                 </button>

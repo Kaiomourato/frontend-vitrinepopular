@@ -2,16 +2,37 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   Utensils, Shirt, Wrench, Sparkles, Package, Home as HomeIcon,
-  Coffee, Palette, Gift, Smartphone, Car, PawPrint, type LucideIcon,
+  Coffee, Palette, Gift, Smartphone, Car, PawPrint, Briefcase, Baby, Gem,
+  type LucideIcon,
 } from 'lucide-react'
 import { categoriasService } from '@/services/lojas'
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
-const ICONES: LucideIcon[] = [
-  Utensils, Shirt, Wrench, Sparkles, Package, HomeIcon,
-  Coffee, Palette, Gift, Smartphone, Car, PawPrint,
+// Ícone por significado do nome da categoria — não por posição/id (que
+// resultava em ícones aleatórios sem relação com a categoria real).
+// Categorias sem palavra-chave reconhecida caem no ícone genérico (Package).
+const MAPA_ICONES: [RegExp, LucideIcon][] = [
+  [/moda|roupa|vestu[aá]rio|calç/i, Shirt],
+  [/cozinha|aliment|comida|mercado|bebida|restaurante/i, Utensils],
+  [/util/i, Wrench],
+  [/escrit[oó]rio|papelaria/i, Briefcase],
+  [/eletr[oô]n|tecnolog|inform[aá]tica/i, Smartphone],
+  [/infant|beb[eê]|crianç/i, Baby],
+  [/j[oó]ia|bijuteria|acess[oó]rio/i, Gem],
+  [/casa|decora|m[oó]vel/i, HomeIcon],
+  [/beleza|cosm[eé]tic|perfum/i, Sparkles],
+  [/pet|animal/i, PawPrint],
+  [/carro|auto|ve[ií]culo/i, Car],
+  [/presente/i, Gift],
+  [/arte|artesan/i, Palette],
+  [/caf[eé]/i, Coffee],
 ]
+
+function iconePara(nomeCategoria: string): LucideIcon {
+  const encontrado = MAPA_ICONES.find(([regex]) => regex.test(nomeCategoria))
+  return encontrado ? encontrado[1] : Package
+}
 
 // Blocos de cor cheios (não tons pastéis) — mel fica com texto escuro por
 // contraste (regra do design system), os demais levam texto branco.
@@ -56,7 +77,7 @@ export function Descobrir() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4" style={{ gridAutoRows: ROW_UNIT }}>
           {categorias.map((categoria, i) => {
-            const Icone = ICONES[categoria.id % ICONES.length]
+            const Icone = iconePara(categoria.nome)
             const paleta = PALETAS[categoria.id % PALETAS.length]
             const alta = i % 5 === 2 || i % 5 === 4
             return (

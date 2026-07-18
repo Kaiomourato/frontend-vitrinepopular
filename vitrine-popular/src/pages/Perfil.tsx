@@ -1,10 +1,14 @@
+import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag, Trophy } from 'lucide-react'
+import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag, Trophy, Camera } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { gamificacaoService } from '@/services/gamificacao'
+import { authService } from '@/services/auth'
+import { extrairErroApi } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
 import { MedalBadge } from '@/components/ui/MedalBadge'
+import { dispararToast } from '@/components/ui'
 
 const ROTULO_PERFIL: Record<string, string> = {
   LOJISTA: 'Lojista',
@@ -13,8 +17,10 @@ const ROTULO_PERFIL: Record<string, string> = {
 }
 
 export function Perfil() {
-  const { isAutenticado, usuario, logout } = useAuthStore()
+  const { isAutenticado, usuario, logout, setUsuario } = useAuthStore()
   const navigate = useNavigate()
+  const inputFotoRef = useRef<HTMLInputElement>(null)
+  const [enviandoFoto, setEnviandoFoto] = useState(false)
 
   const { data: gamificacao } = useQuery({
     queryKey: ['gamificacao', usuario?.id],
@@ -25,6 +31,26 @@ export function Perfil() {
   function handleLogout() {
     logout()
     navigate('/')
+  }
+
+  async function handleEscolherFoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const arquivo = e.target.files?.[0]
+    e.target.value = ''
+    if (!arquivo) return
+    if (arquivo.size > 5 * 1024 * 1024) {
+      dispararToast('A foto deve ter no máximo 5MB.', 'error')
+      return
+    }
+    setEnviandoFoto(true)
+    try {
+      const atualizado = await authService.atualizarFoto(arquivo)
+      setUsuario(atualizado)
+      dispararToast('Foto de perfil atualizada!', 'success')
+    } catch (err) {
+      dispararToast(extrairErroApi(err), 'error')
+    } finally {
+      setEnviandoFoto(false)
+    }
   }
 
   if (!isAutenticado || !usuario) {
@@ -60,11 +86,27 @@ export function Perfil() {
           style={{ clipPath: 'var(--hex-clip)' }}
         />
         <div className="relative flex items-center gap-4">
-          <div
-            className="w-16 h-16 shrink-0 flex items-center justify-center font-display font-black text-2xl bg-gradient-to-br from-terracota-500 to-mel-500 shadow-md"
-            style={{ clipPath: 'var(--hex-clip)' }}
-          >
-            {usuario.nome?.[0]?.toUpperCase()}
+          <div className="relative shrink-0">
+            <div
+              className="w-16 h-16 flex items-center justify-center font-display font-black text-2xl bg-gradient-to-br from-terracota-500 to-mel-500 shadow-md overflow-hidden"
+              style={{ clipPath: 'var(--hex-clip)' }}
+            >
+              {usuario.fotoUrl ? (
+                <img src={usuario.fotoUrl} alt={usuario.nome} className="w-full h-full object-cover" />
+              ) : (
+                usuario.nome?.[0]?.toUpperCase()
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => inputFotoRef.current?.click()}
+              disabled={enviandoFoto}
+              aria-label="Trocar foto de perfil"
+              className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center bg-white text-ink-900 shadow-md border border-sand-200 transition-transform active:scale-90 disabled:opacity-60"
+            >
+              <Camera size={13} />
+            </button>
+            <input ref={inputFotoRef} type="file" accept="image/*" className="hidden" onChange={handleEscolherFoto} />
           </div>
           <div className="min-w-0 flex-1">
             <p className="font-display font-extrabold text-lg truncate">{usuario.nome}</p>
