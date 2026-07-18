@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { MapPin, ThumbsDown, ThumbsUp, Heart, Share2, ChevronRight } from 'lucide-react'
+import { MapPin, ThumbsDown, ThumbsUp, Heart, Share2, ChevronRight, ChevronDown } from 'lucide-react'
 import { cn, formatarPreco } from '@/lib/utils'
 import { compartilharOferta } from '@/lib/compartilhar'
 import { ehAchadoDeOuro } from '@/lib/ofertas'
@@ -16,14 +16,17 @@ import type { OfertaResponse } from '@/types'
 interface CardFeedVerticalProps {
   oferta: OfertaResponse
   onVotoAcabou?: () => void
+  /** Primeiro card do feed — mostra a dica de "deslize" uma única vez. */
+  primeiro?: boolean
 }
 
 /**
- * Card full-bleed do feed vertical (descoberta estilo "rolar e ver o que
- * apareceu hoje") — uma oferta por tela. Ações vivem num trilho lateral,
- * o toque no corpo do card abre o detalhe.
+ * Card do feed vertical (descoberta estilo "rolar e ver o que apareceu
+ * hoje") — uma oferta por tela. Full-bleed no mobile; em telas largas vira
+ * um cartão no formato de celular centralizado (a "moldura" de favo escura
+ * ao redor vem do fundo da linha virtualizada, em Feed.tsx).
  */
-export function CardFeedVertical({ oferta, onVotoAcabou }: CardFeedVerticalProps) {
+export function CardFeedVertical({ oferta, onVotoAcabou, primeiro }: CardFeedVerticalProps) {
   const navigate = useNavigate()
   const isAutenticado = useAuthStore(s => s.isAutenticado)
   const { idsFavoritos } = useFavoritos()
@@ -76,8 +79,11 @@ export function CardFeedVertical({ oferta, onVotoAcabou }: CardFeedVerticalProps
     <article
       onClick={() => navigate(`/oferta/${oferta.id}`)}
       className={cn(
-        'relative w-full h-full overflow-hidden cursor-pointer bg-ink-900',
-        ouro && 'ring-4 ring-inset ring-mel-400/70'
+        'relative w-full h-full overflow-hidden cursor-pointer bg-ink-900 transition-shadow duration-300',
+        // Desktop/tablet: card no formato de celular, centralizado — a
+        // textura de favo do fundo (Feed.tsx) vira a "moldura" ao redor.
+        'md:w-auto md:aspect-[9/16] md:h-[88%] md:mx-auto md:my-[6%] md:rounded-[28px] md:shadow-2xl md:shadow-black/60',
+        ouro ? 'ring-4 ring-inset ring-mel-400/80' : 'md:ring-1 md:ring-white/10'
       )}
     >
       {oferta.imagemUrl && !imgErro ? (
@@ -95,78 +101,92 @@ export function CardFeedVertical({ oferta, onVotoAcabou }: CardFeedVerticalProps
         </div>
       )}
 
-      {/* Scrim inferior — legibilidade do conteúdo sobre a foto */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+      {/* Scrim superior — legibilidade do selo/categoria sobre fotos claras */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/55 to-transparent" />
+      {/* Scrim inferior — legibilidade do conteúdo principal */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
+
+      {primeiro && (
+        <div className="pointer-events-none absolute inset-x-0 top-24 flex flex-col items-center gap-1 z-10 motion-safe:animate-bounce">
+          <span className="text-xs font-semibold text-white bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1">
+            Deslize para ver mais achados
+            <ChevronDown size={14} />
+          </span>
+        </div>
+      )}
 
       {/* Trilho de ações — lado direito */}
-      <div className="absolute right-3 bottom-28 flex flex-col items-center gap-3 z-10">
+      <div className="absolute right-3 bottom-28 flex flex-col items-center gap-3.5 z-10">
         <button
           onClick={handleFavoritar}
           disabled={toggleFavorito.isPending}
-          className="w-12 h-12 rounded-full flex flex-col items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-transform active:scale-90"
+          className={cn(
+            'w-14 h-14 rounded-full flex flex-col items-center justify-center text-white backdrop-blur-sm transition-all active:scale-90',
+            favoritado ? 'bg-perigo-500 shadow-lg shadow-perigo-500/50' : 'bg-white/15 hover:bg-white/25'
+          )}
           title={favoritado ? 'Remover dos salvos' : 'Salvar'}
         >
           <Heart
-            size={22}
+            size={24}
             fill={favoritado ? '#fff' : 'none'}
             className={favoritado ? 'motion-safe:animate-pulsar' : ''}
           />
         </button>
         <button
           onClick={handleCompartilhar}
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-transform active:scale-90"
+          className="w-14 h-14 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-all hover:bg-white/25 active:scale-90"
           title="Compartilhar"
         >
-          <Share2 size={20} />
+          <Share2 size={22} />
         </button>
         <button
           onClick={handleVotarAcabou}
           disabled={votou || votando}
           className={cn(
-            'w-12 h-12 rounded-full flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm text-white text-[10px] font-semibold transition-transform active:scale-90 disabled:opacity-70',
-            votou ? 'bg-perigo-600/80' : 'bg-white/15'
+            'w-14 h-14 rounded-full flex flex-col items-center justify-center gap-0.5 backdrop-blur-sm text-white text-[11px] font-bold transition-all active:scale-90 disabled:opacity-70',
+            votou ? 'bg-perigo-600 shadow-lg shadow-perigo-600/50' : 'bg-white/15 hover:bg-white/25'
           )}
           title="Sinalizar que acabou"
         >
-          <ThumbsDown size={18} />
+          <ThumbsDown size={20} />
           {oferta.votosAcabou > 0 && oferta.votosAcabou}
         </button>
         <button
           onClick={e => { e.stopPropagation(); navigate(`/oferta/${oferta.id}`) }}
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-transform active:scale-90"
+          className="w-14 h-14 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white transition-all hover:bg-white/25 active:scale-90"
           title="Ver detalhes"
         >
-          <ChevronRight size={22} />
+          <ChevronRight size={24} />
         </button>
       </div>
 
       {/* Conteúdo — canto inferior esquerdo */}
-      <div className="absolute inset-x-0 bottom-0 pr-20 p-5 flex flex-col gap-2 z-10">
+      <div className="absolute inset-x-0 bottom-0 pr-24 p-5 flex flex-col gap-2.5 z-10">
         <div className="flex items-center gap-1.5 flex-wrap">
           {ouro && <SeloOuro />}
-          <span className="text-xs font-medium px-2 py-0.5 rounded-full text-white/90 bg-white/15 backdrop-blur-sm">
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full text-white bg-white/20 backdrop-blur-sm">
             {oferta.categoria.nome}
           </span>
         </div>
 
-        <h2 className="font-display text-xl font-semibold leading-tight text-white line-clamp-2">
+        <h2 className="font-display text-2xl md:text-3xl font-bold leading-tight text-white line-clamp-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.6)]">
           {oferta.produtoNome}
         </h2>
 
-        <p className="font-display text-display-md font-semibold text-mel-300">
+        <p className="inline-flex w-fit items-center font-display text-display-md font-bold text-white px-4 py-1.5 rounded-xl bg-gradient-to-r from-terracota-500 to-queimado-500 ring-2 ring-white/20 shadow-lg shadow-terracota-600/50">
           {formatarPreco(oferta.preco)}
         </p>
 
         <button
           onClick={e => { e.stopPropagation(); navigate(`/loja/${oferta.loja.id}`) }}
-          className="flex items-center gap-1 text-sm text-white/85 text-left hover:underline w-fit"
+          className="flex items-center gap-1 text-sm font-bold text-mel-300 text-left hover:underline w-fit"
         >
           <MapPin size={13} className="shrink-0" />
           <span className="truncate">{oferta.loja.nome}</span>
         </button>
 
         {oferta.votosAindaTem > 0 && (
-          <p className="flex items-center gap-1.5 text-sm text-mandacaru-300">
+          <p className="flex items-center gap-1.5 text-sm font-medium text-mandacaru-300">
             <ThumbsUp size={13} />
             {oferta.votosAindaTem} pessoa{oferta.votosAindaTem > 1 ? 's' : ''} confirmam que ainda tem
           </p>

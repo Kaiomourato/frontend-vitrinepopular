@@ -127,7 +127,7 @@ export function DetalheOferta() {
           </div>
 
           <div>
-            <h1 className="font-display text-display-md font-semibold leading-tight text-ink-900">
+            <h1 className="font-display text-display-md font-bold leading-tight text-ink-900">
               {oferta.produtoNome}
             </h1>
             {oferta.descricao && (
@@ -138,7 +138,7 @@ export function DetalheOferta() {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <p className="font-display text-display-lg font-semibold text-terracota-700">
+            <p className="inline-flex w-fit items-center font-display text-display-lg font-bold text-white px-4 py-1.5 rounded-xl bg-gradient-to-r from-terracota-500 to-queimado-500 shadow-md shadow-terracota-500/30">
               {formatarPreco(oferta.preco)}
             </p>
             {oferta.votosAindaTem > 0 && (
@@ -151,10 +151,10 @@ export function DetalheOferta() {
 
           <Link
             to={`/loja/${oferta.loja.id}`}
-            className="flex flex-col gap-1 p-4 rounded-lg border border-sand-200 bg-cream-50 transition-colors hover:border-terracota-500"
+            className="flex flex-col gap-1 p-4 rounded-lg border-2 border-terracota-100 bg-terracota-50 transition-colors hover:border-terracota-400"
           >
-            <span className="text-xs font-medium text-ink-500">Vendido por</span>
-            <span className="font-semibold text-ink-900">{oferta.loja.nome}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-terracota-600">Vendido por</span>
+            <span className="font-bold text-ink-900">{oferta.loja.nome}</span>
             {oferta.loja.endereco && (
               <span className="flex items-center gap-1 text-sm text-ink-700">
                 <MapPin size={13} /> {oferta.loja.endereco}

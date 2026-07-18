@@ -85,7 +85,7 @@ export function SeloOuro({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full bg-mel-500 px-2 py-0.5 text-[10px] font-semibold text-mel-900 shadow-sm',
+        'inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-mel-400 to-mel-600 px-2 py-0.5 text-[10px] font-bold text-mel-900 shadow-sm shadow-mel-500/40',
         className
       )}
     >

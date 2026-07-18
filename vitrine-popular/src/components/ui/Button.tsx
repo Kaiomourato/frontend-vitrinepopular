@@ -13,11 +13,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       'inline-flex items-center justify-center gap-2 font-medium transition-all rounded-lg disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]'
 
     const variants = {
-      primary:   'bg-terracota-500 text-white hover:bg-terracota-600 focus-visible:ring-terracota-500',
-      secondary: 'bg-terracota-50 text-terracota-700 hover:bg-terracota-100 focus-visible:ring-terracota-500',
+      primary:   'bg-gradient-to-r from-terracota-500 to-queimado-500 text-white shadow-md shadow-terracota-500/25 hover:from-terracota-600 hover:to-queimado-600 hover:shadow-lg hover:shadow-terracota-500/30 focus-visible:ring-terracota-500',
+      secondary: 'bg-terracota-100 text-terracota-700 hover:bg-terracota-200 focus-visible:ring-terracota-500',
       ghost:     'bg-transparent text-ink-700 hover:bg-sand-100 focus-visible:ring-sand-300',
-      danger:    'bg-perigo-600 text-white hover:bg-perigo-700 focus-visible:ring-perigo-600',
-      outline:   'border border-sand-200 bg-white text-ink-900 hover:bg-sand-100 focus-visible:ring-sand-300',
+      danger:    'bg-gradient-to-r from-perigo-600 to-perigo-500 text-white shadow-md shadow-perigo-600/25 hover:from-perigo-700 hover:to-perigo-600 focus-visible:ring-perigo-600',
+      outline:   'border-2 border-sand-300 bg-white text-ink-900 hover:border-terracota-400 hover:bg-terracota-50 focus-visible:ring-sand-300',
     }
 
     const sizes = {

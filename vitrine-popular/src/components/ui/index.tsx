@@ -48,14 +48,14 @@ interface BadgeProps {
 
 export function Badge({ children, variant = 'default', className }: BadgeProps) {
   const variants = {
-    default: 'bg-sand-100 text-ink-700 border border-sand-200',
-    primary: 'bg-terracota-50 text-terracota-700',
-    success: 'bg-mandacaru-50 text-mandacaru-600',
-    warning: 'bg-mel-50 text-mel-800',
-    danger:  'bg-perigo-50 text-perigo-600',
+    default: 'bg-sand-200 text-ink-900',
+    primary: 'bg-terracota-500 text-white',
+    success: 'bg-mandacaru-600 text-white',
+    warning: 'bg-mel-500 text-mel-900',
+    danger:  'bg-perigo-600 text-white',
   }
   return (
-    <span className={cn('inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full', variants[variant], className)}>
+    <span className={cn('inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm', variants[variant], className)}>
       {children}
     </span>
   )

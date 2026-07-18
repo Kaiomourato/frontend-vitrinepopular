@@ -59,14 +59,14 @@ export function Ranking() {
 
   return (
     <div className="container-app py-6 flex flex-col gap-6">
-      <div className="rounded-xl px-6 py-8 md:py-12 text-center bg-terracota-50">
+      <div className="rounded-xl px-6 py-8 md:py-12 text-center bg-gradient-to-br from-terracota-500 via-terracota-600 to-queimado-600 shadow-lg shadow-terracota-500/20">
         <div className="flex justify-center mb-2">
-          <Trophy size={28} className="text-terracota-600" />
+          <Trophy size={28} className="text-mel-300" />
         </div>
-        <h1 className="font-display text-display-lg font-semibold mb-2 text-terracota-700">
+        <h1 className="font-display text-display-lg font-bold mb-2 text-white">
           Ranking da Vitrine
         </h1>
-        <p className="text-sm md:text-base text-ink-700">
+        <p className="text-sm md:text-base text-terracota-50">
           Quem mais contribui, o que mais faz sucesso no comércio de Picos-PI.
         </p>
       </div>
@@ -93,7 +93,7 @@ export function Ranking() {
         ) : (
           <div className="flex flex-col gap-2">
             {colaboradores.content.map((c, i) => (
-              <div key={c.usuarioId} className="flex items-center gap-3 p-3 rounded-xl border border-sand-200 bg-white">
+              <div key={c.usuarioId} className="flex items-center gap-3 p-3 rounded-xl border border-sand-200 bg-white shadow-sm transition-shadow hover:shadow-md">
                 <PosicaoBadge posicao={i} />
                 <p className="flex-1 min-w-0 font-medium text-sm truncate text-ink-900">{c.nome}</p>
                 <Badge variant="primary">{c.contribuicoesAprovadas} contribuições</Badge>
@@ -109,7 +109,7 @@ export function Ranking() {
         ) : (
           <div className="flex flex-col gap-2">
             {lojas.content.map((l, i) => (
-              <div key={l.lojaId} className="flex items-center gap-3 p-3 rounded-xl border border-sand-200 bg-white">
+              <div key={l.lojaId} className="flex items-center gap-3 p-3 rounded-xl border border-sand-200 bg-white shadow-sm transition-shadow hover:shadow-md">
                 <PosicaoBadge posicao={i} />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate text-ink-900">{l.nome}</p>

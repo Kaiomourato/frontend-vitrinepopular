@@ -130,13 +130,17 @@ export function Feed() {
               key={virtualRow.key}
               data-index={virtualRow.index}
               ref={virtualizer.measureElement}
-              className="absolute top-0 left-0 w-full snap-start snap-always"
+              className="absolute top-0 left-0 w-full snap-start snap-always bg-ink-900 bg-favo-textura"
               style={{
                 height: `calc(100dvh - ${ALTURA_NAVBAR}px)`,
                 transform: `translateY(${virtualRow.start - scrollMargin}px)`,
               }}
             >
-              <CardFeedVertical oferta={oferta} onVotoAcabou={invalidarFeed} />
+              <CardFeedVertical
+                oferta={oferta}
+                onVotoAcabou={invalidarFeed}
+                primeiro={virtualRow.index === 0}
+              />
             </div>
           )
         })}

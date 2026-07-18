@@ -20,10 +20,10 @@ export function FiltroCategoria({ categoriaSelecionada, onChange }: FiltroCatego
       <button
         onClick={() => onChange(null)}
         className={cn(
-          'shrink-0 text-sm font-medium px-4 py-1.5 rounded-full border transition-all',
+          'shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full border transition-all',
           categoriaSelecionada === null
-            ? 'text-white border-transparent bg-terracota-500'
-            : 'text-ink-700 bg-transparent border-sand-200 hover:border-terracota-500'
+            ? 'text-white border-transparent bg-gradient-to-r from-terracota-500 to-queimado-500 shadow-sm shadow-terracota-500/30'
+            : 'text-ink-700 bg-white border-sand-200 hover:border-terracota-400'
         )}
       >
         Todas
@@ -33,10 +33,10 @@ export function FiltroCategoria({ categoriaSelecionada, onChange }: FiltroCatego
           key={cat.id}
           onClick={() => onChange(cat.id)}
           className={cn(
-            'shrink-0 text-sm font-medium px-4 py-1.5 rounded-full border transition-all',
+            'shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full border transition-all',
             categoriaSelecionada === cat.id
-              ? 'text-white border-transparent bg-terracota-500'
-              : 'text-ink-700 bg-transparent border-sand-200 hover:border-terracota-500'
+              ? 'text-white border-transparent bg-gradient-to-r from-terracota-500 to-queimado-500 shadow-sm shadow-terracota-500/30'
+              : 'text-ink-700 bg-white border-sand-200 hover:border-terracota-400'
           )}
         >
           {cat.nome}

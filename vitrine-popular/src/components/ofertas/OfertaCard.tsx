@@ -70,7 +70,7 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
     <article
       onClick={() => navigate(`/oferta/${oferta.id}`)}
       style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
-      className="group cursor-pointer rounded-lg border border-sand-200 bg-white overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 motion-safe:animate-surgir"
+      className="group cursor-pointer rounded-lg border border-sand-200 bg-white overflow-hidden shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 motion-safe:animate-surgir"
     >
       {/* Imagem — proporção fixa para domar fotos de qualidade variável */}
       <div className="relative aspect-square overflow-hidden bg-mel-50">
@@ -115,9 +115,9 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
       </div>
 
       {/* Conteúdo */}
-      <div className="p-3 flex flex-col gap-2">
+      <div className="p-3 flex flex-col gap-2.5">
         <div>
-          <p className="font-semibold text-sm leading-tight line-clamp-2 text-ink-900">
+          <p className="font-bold text-[15px] leading-tight line-clamp-2 text-ink-900">
             {oferta.produtoNome}
           </p>
           {oferta.descricao && (
@@ -127,19 +127,19 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
           )}
         </div>
 
-        {/* Preço em destaque — tipografia editorial */}
-        <p className="font-display text-display-sm font-semibold text-terracota-700">
+        {/* Preço em destaque — tag de oferta, não texto corrido */}
+        <p className="inline-flex w-fit items-center font-display text-display-sm font-bold text-white px-3 py-1 rounded-lg bg-gradient-to-r from-terracota-500 to-queimado-500 shadow-sm shadow-terracota-500/30">
           {formatarPreco(oferta.preco)}
         </p>
 
         <button
           onClick={e => { e.stopPropagation(); navigate(`/loja/${oferta.loja.id}`) }}
-          className="flex items-center gap-1 text-xs transition-colors hover:underline text-left text-ink-700"
+          className="flex items-center gap-1 text-xs font-semibold transition-colors hover:underline text-left text-terracota-700"
         >
           <MapPin size={11} className="shrink-0" />
           <span className="truncate">{oferta.loja.nome}</span>
           {oferta.loja.endereco && (
-            <span className="truncate hidden sm:inline">• {oferta.loja.endereco}</span>
+            <span className="truncate hidden sm:inline text-ink-500 font-normal">• {oferta.loja.endereco}</span>
           )}
         </button>
 

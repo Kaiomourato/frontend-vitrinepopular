@@ -13,12 +13,14 @@ const ICONES: LucideIcon[] = [
   Coffee, Palette, Gift, Smartphone, Car, PawPrint,
 ]
 
+// Blocos de cor cheios (não tons pastéis) — mel fica com texto escuro por
+// contraste (regra do design system), os demais levam texto branco.
 const PALETAS = [
-  { bg: 'bg-terracota-50', text: 'text-terracota-700' },
-  { bg: 'bg-queimado-50', text: 'text-queimado-700' },
-  { bg: 'bg-mel-50', text: 'text-mel-800' },
-  { bg: 'bg-mandacaru-50', text: 'text-mandacaru-700' },
-  { bg: 'bg-perigo-50', text: 'text-perigo-600' },
+  { bg: 'bg-gradient-to-br from-terracota-500 to-terracota-700', text: 'text-white', iconBg: 'bg-white/20' },
+  { bg: 'bg-gradient-to-br from-queimado-400 to-queimado-600', text: 'text-white', iconBg: 'bg-white/20' },
+  { bg: 'bg-gradient-to-br from-mel-300 to-mel-500', text: 'text-mel-900', iconBg: 'bg-white/50' },
+  { bg: 'bg-gradient-to-br from-mandacaru-500 to-mandacaru-700', text: 'text-white', iconBg: 'bg-white/20' },
+  { bg: 'bg-gradient-to-br from-perigo-500 to-perigo-700', text: 'text-white', iconBg: 'bg-white/20' },
 ]
 
 const ROW_UNIT = 104 // px — usado no gridAutoRows para o efeito "Pinterest"
@@ -63,14 +65,14 @@ export function Descobrir() {
                 to={`/busca?categoria=${categoria.id}`}
                 style={{ gridRow: alta ? 'span 2' : 'span 1' }}
                 className={cn(
-                  'relative rounded-xl overflow-hidden flex flex-col justify-end gap-2 p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md',
+                  'relative rounded-xl overflow-hidden flex flex-col justify-end gap-2 p-4 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg',
                   paleta.bg
                 )}
               >
-                <div className={cn('w-9 h-9 rounded-full flex items-center justify-center bg-white/70', paleta.text)}>
+                <div className={cn('w-9 h-9 rounded-full flex items-center justify-center', paleta.iconBg, paleta.text)}>
                   <Icone size={19} strokeWidth={1.8} />
                 </div>
-                <span className={cn('font-display text-lg font-semibold leading-tight', paleta.text)}>
+                <span className={cn('font-display text-lg font-bold leading-tight', paleta.text)}>
                   {categoria.nome}
                 </span>
               </Link>
