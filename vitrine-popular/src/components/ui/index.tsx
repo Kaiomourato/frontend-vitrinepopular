@@ -14,7 +14,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+          <label htmlFor={inputId} className="text-sm font-medium text-ink-900">
             {label}
           </label>
         )}
@@ -22,18 +22,17 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'w-full h-10 rounded-[10px] border text-sm px-3 transition-all outline-none appearance-none cursor-pointer',
+            'w-full h-10 rounded-[10px] border text-sm px-3 transition-all outline-none appearance-none cursor-pointer text-ink-900',
             error
-              ? 'border-[var(--color-danger)] bg-[var(--color-danger-light)]'
-              : 'border-[var(--color-border)] bg-[var(--color-surface)] focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/15',
+              ? 'border-perigo-600 bg-perigo-50'
+              : 'border-sand-200 bg-white focus:border-terracota-500 focus:ring-2 focus:ring-terracota-500/15',
             className
           )}
-          style={{ color: 'var(--color-text-primary)' }}
           {...props}
         >
           {children}
         </select>
-        {error && <p className="text-xs" style={{ color: 'var(--color-danger)' }}>{error}</p>}
+        {error && <p className="text-xs text-perigo-600">{error}</p>}
       </div>
     )
   }
@@ -49,11 +48,11 @@ interface BadgeProps {
 
 export function Badge({ children, variant = 'default', className }: BadgeProps) {
   const variants = {
-    default: 'bg-[var(--color-surface-hover)] text-[var(--color-text-secondary)] border border-[var(--color-border)]',
-    primary: 'bg-[var(--color-primary-light)] text-[var(--color-primary)]',
-    success: 'bg-[var(--color-success-light)] text-[var(--color-success)]',
-    warning: 'bg-[var(--color-warning-light)] text-[var(--color-warning)]',
-    danger:  'bg-[var(--color-danger-light)] text-[var(--color-danger)]',
+    default: 'bg-sand-100 text-ink-700 border border-sand-200',
+    primary: 'bg-terracota-50 text-terracota-700',
+    success: 'bg-mandacaru-50 text-mandacaru-600',
+    warning: 'bg-mel-50 text-mel-800',
+    danger:  'bg-perigo-50 text-perigo-600',
   }
   return (
     <span className={cn('inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full', variants[variant], className)}>
@@ -66,8 +65,8 @@ export function Badge({ children, variant = 'default', className }: BadgeProps) 
 export function Spinner({ size = 20 }: { size?: number }) {
   return (
     <svg
-      className="animate-spin"
-      style={{ width: size, height: size, color: 'var(--color-primary)' }}
+      className="animate-spin text-terracota-500"
+      style={{ width: size, height: size }}
       fill="none"
       viewBox="0 0 24 24"
     >
@@ -89,8 +88,7 @@ export function Card({ children, className, onClick }: CardProps) {
     <div
       onClick={onClick}
       className={cn(
-        'rounded-[14px] border bg-[var(--color-surface)] transition-all',
-        'border-[var(--color-border)]',
+        'rounded-[14px] border bg-white transition-all border-sand-200',
         onClick && 'cursor-pointer hover:shadow-md hover:-translate-y-0.5',
         className
       )}
@@ -112,14 +110,13 @@ export function EmptyState({ icon, titulo, descricao, acao }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
       {icon && (
-        <div className="w-16 h-16 rounded-full flex items-center justify-center"
-          style={{ background: 'var(--color-surface-hover)', color: 'var(--color-text-muted)' }}>
+        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-sand-100 text-ink-500">
           {icon}
         </div>
       )}
       <div>
-        <p className="font-medium text-lg" style={{ color: 'var(--color-text-primary)' }}>{titulo}</p>
-        {descricao && <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>{descricao}</p>}
+        <p className="font-medium text-lg text-ink-900">{titulo}</p>
+        {descricao && <p className="text-sm mt-1 text-ink-700">{descricao}</p>}
       </div>
       {acao}
     </div>

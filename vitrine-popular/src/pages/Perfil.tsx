@@ -1,18 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag, Trophy, Medal } from 'lucide-react'
+import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag, Trophy } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { gamificacaoService } from '@/services/gamificacao'
 import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui'
-import type { Medalha } from '@/types'
-
-const MEDALHA_LABEL: Record<Medalha, string> = { BRONZE: 'Bronze', PRATA: 'Prata', OURO: 'Ouro' }
-const MEDALHA_COR: Record<Medalha, string> = {
-  BRONZE: 'bg-terracota-100 text-terracota-700',
-  PRATA: 'bg-sand-200 text-ink-900',
-  OURO: 'bg-mel-200 text-mel-700',
-}
+import { MedalBadge } from '@/components/ui/MedalBadge'
 
 const ROTULO_PERFIL: Record<string, string> = {
   LOJISTA: 'Lojista',
@@ -68,9 +60,7 @@ export function Perfil() {
         </div>
         {gamificacao?.medalha && (
           <div className="flex flex-col items-center gap-1 shrink-0">
-            <Badge className={MEDALHA_COR[gamificacao.medalha]}>
-              <Medal size={12} className="mr-1 inline" />{MEDALHA_LABEL[gamificacao.medalha]}
-            </Badge>
+            <MedalBadge medalha={gamificacao.medalha} tamanho="md" comLabel />
             <span className="text-[11px] text-ink-500">{gamificacao.contribuicoesAprovadas} contribuições</span>
           </div>
         )}

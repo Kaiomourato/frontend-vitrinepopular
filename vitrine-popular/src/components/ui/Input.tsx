@@ -13,13 +13,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+          <label htmlFor={inputId} className="text-sm font-medium text-ink-900">
             {label}
           </label>
         )}
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-muted)' }}>
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-500">
               {leftIcon}
             </div>
           )}
@@ -27,19 +27,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              'w-full h-10 rounded-[10px] border text-sm transition-all outline-none',
-              'placeholder:text-[var(--color-text-muted)]',
+              'w-full h-10 rounded-[10px] border text-sm transition-all outline-none text-ink-900',
+              'placeholder:text-ink-500',
               leftIcon ? 'pl-10 pr-4' : 'px-4',
               error
-                ? 'border-[var(--color-danger)] bg-[var(--color-danger-light)] focus:ring-2 focus:ring-[var(--color-danger)]/20'
-                : 'border-[var(--color-border)] bg-[var(--color-surface)] focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/15',
+                ? 'border-perigo-600 bg-perigo-50 focus:ring-2 focus:ring-perigo-600/20'
+                : 'border-sand-200 bg-white focus:border-terracota-500 focus:ring-2 focus:ring-terracota-500/15',
               className
             )}
-            style={{ color: 'var(--color-text-primary)' }}
             {...props}
           />
         </div>
-        {error && <p className="text-xs" style={{ color: 'var(--color-danger)' }}>{error}</p>}
+        {error && <p className="text-xs text-perigo-600">{error}</p>}
       </div>
     )
   }

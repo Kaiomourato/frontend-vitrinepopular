@@ -22,14 +22,9 @@ export function FiltroCategoria({ categoriaSelecionada, onChange }: FiltroCatego
         className={cn(
           'shrink-0 text-sm font-medium px-4 py-1.5 rounded-full border transition-all',
           categoriaSelecionada === null
-            ? 'text-white border-transparent'
-            : 'border-[var(--color-border)] hover:border-[var(--color-primary)]'
+            ? 'text-white border-transparent bg-terracota-500'
+            : 'text-ink-700 bg-transparent border-sand-200 hover:border-terracota-500'
         )}
-        style={
-          categoriaSelecionada === null
-            ? { background: 'var(--color-primary)', color: '#fff' }
-            : { color: 'var(--color-text-secondary)', background: 'transparent' }
-        }
       >
         Todas
       </button>
@@ -40,14 +35,9 @@ export function FiltroCategoria({ categoriaSelecionada, onChange }: FiltroCatego
           className={cn(
             'shrink-0 text-sm font-medium px-4 py-1.5 rounded-full border transition-all',
             categoriaSelecionada === cat.id
-              ? 'border-transparent'
-              : 'border-[var(--color-border)] hover:border-[var(--color-primary)]'
+              ? 'text-white border-transparent bg-terracota-500'
+              : 'text-ink-700 bg-transparent border-sand-200 hover:border-terracota-500'
           )}
-          style={
-            categoriaSelecionada === cat.id
-              ? { background: 'var(--color-primary)', color: '#fff' }
-              : { color: 'var(--color-text-secondary)', background: 'transparent' }
-          }
         >
           {cat.nome}
         </button>

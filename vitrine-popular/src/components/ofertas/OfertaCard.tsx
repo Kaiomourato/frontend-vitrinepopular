@@ -4,11 +4,13 @@ import axios from 'axios'
 import { MapPin, ThumbsDown, Clock, Heart, Share2 } from 'lucide-react'
 import { cn, formatarPreco, formatarDataRelativa } from '@/lib/utils'
 import { compartilharOferta } from '@/lib/compartilhar'
+import { ehAchadoDeOuro } from '@/lib/ofertas'
 import { ofertasService } from '@/services/ofertas'
 import { useAuthStore } from '@/store/authStore'
 import { useFavoritos, useToggleFavorito } from '@/hooks/useFavoritos'
 import { Badge, dispararToast } from '@/components/ui'
 import { PlaceholderFavo } from '@/components/ui/PlaceholderFavo'
+import { CardOuro, SeloOuro } from '@/components/ofertas/CardOuro'
 import type { OfertaResponse } from '@/types'
 
 interface OfertaCardProps {
@@ -61,7 +63,10 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
     }
   }
 
+  const ouro = ehAchadoDeOuro(oferta)
+
   return (
+    <CardOuro ativo={ouro}>
     <article
       onClick={() => navigate(`/oferta/${oferta.id}`)}
       style={{ animationDelay: `${Math.min(index, 12) * 40}ms` }}
@@ -82,7 +87,8 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
           <PlaceholderFavo />
         )}
 
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
+          {ouro && <SeloOuro />}
           <span className="text-xs font-medium px-2 py-0.5 rounded-full text-white backdrop-blur-sm bg-ink-900/55">
             {oferta.categoria.nome}
           </span>
@@ -175,5 +181,6 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
         </div>
       </div>
     </article>
+    </CardOuro>
   )
 }

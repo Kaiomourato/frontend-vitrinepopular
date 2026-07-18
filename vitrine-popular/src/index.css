@@ -236,4 +236,9 @@
     line-clamp: 3;
     overflow: hidden;
   }
+
+  /* Feed vertical (Home) — scroll-snap ligado só enquanto a tela está montada */
+  .feed-vertical-scroll {
+    scroll-snap-type: y mandatory;
+  }
 }

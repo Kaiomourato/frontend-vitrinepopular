@@ -18,9 +18,10 @@ const PALETAS = [
   { bg: 'bg-queimado-50', text: 'text-queimado-700' },
   { bg: 'bg-mel-50', text: 'text-mel-800' },
   { bg: 'bg-mandacaru-50', text: 'text-mandacaru-700' },
+  { bg: 'bg-perigo-50', text: 'text-perigo-600' },
 ]
 
-const ROW_UNIT = 92 // px — usado no gridAutoRows para o efeito "Pinterest"
+const ROW_UNIT = 104 // px — usado no gridAutoRows para o efeito "Pinterest"
 
 export function Descobrir() {
   const { data: categorias = [], isLoading } = useQuery({
@@ -59,15 +60,17 @@ export function Descobrir() {
             return (
               <Link
                 key={categoria.id}
-                to={`/?categoria=${categoria.id}`}
+                to={`/busca?categoria=${categoria.id}`}
                 style={{ gridRow: alta ? 'span 2' : 'span 1' }}
                 className={cn(
-                  'relative rounded-xl overflow-hidden flex flex-col justify-end gap-2 p-4 transition-transform duration-200 hover:-translate-y-0.5',
+                  'relative rounded-xl overflow-hidden flex flex-col justify-end gap-2 p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md',
                   paleta.bg
                 )}
               >
-                <Icone size={24} className={paleta.text} strokeWidth={1.6} />
-                <span className={cn('font-display font-semibold leading-tight', paleta.text)}>
+                <div className={cn('w-9 h-9 rounded-full flex items-center justify-center bg-white/70', paleta.text)}>
+                  <Icone size={19} strokeWidth={1.8} />
+                </div>
+                <span className={cn('font-display text-lg font-semibold leading-tight', paleta.text)}>
                   {categoria.nome}
                 </span>
               </Link>

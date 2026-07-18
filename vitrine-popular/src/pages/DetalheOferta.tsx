@@ -7,7 +7,9 @@ import { useAuthStore } from '@/store/authStore'
 import { useFavoritos, useToggleFavorito } from '@/hooks/useFavoritos'
 import { Button, Badge, EmptyState } from '@/components/ui'
 import { formatarPreco, formatarDataRelativa, formatarWhatsApp } from '@/lib/utils'
+import { ehAchadoDeOuro } from '@/lib/ofertas'
 import { compartilharOferta } from '@/lib/compartilhar'
+import { SeloOuro } from '@/components/ofertas/CardOuro'
 import { useState } from 'react'
 import { dispararToast } from '@/components/ui'
 
@@ -80,6 +82,7 @@ export function DetalheOferta() {
   )
 
   const whatsappUrl = formatarWhatsApp(oferta.loja.whatsapp)
+  const ouro = ehAchadoDeOuro(oferta)
 
   return (
     <div className="container-app py-6">
@@ -100,6 +103,7 @@ export function DetalheOferta() {
         <div className="flex flex-col gap-5">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 flex-wrap">
+              {ouro && <SeloOuro />}
               <Badge variant="primary">{oferta.categoria.nome}</Badge>
               {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
               {oferta.status === 'EXPIRADA' && <Badge variant="warning">Expirada</Badge>}
@@ -133,9 +137,17 @@ export function DetalheOferta() {
             )}
           </div>
 
-          <p className="font-display text-display-lg font-semibold text-terracota-700">
-            {formatarPreco(oferta.preco)}
-          </p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <p className="font-display text-display-lg font-semibold text-terracota-700">
+              {formatarPreco(oferta.preco)}
+            </p>
+            {oferta.votosAindaTem > 0 && (
+              <span className="flex items-center gap-1.5 text-sm font-medium text-mandacaru-600">
+                <ThumbsUp size={14} />
+                {oferta.votosAindaTem} confirmam que ainda tem
+              </span>
+            )}
+          </div>
 
           <Link
             to={`/loja/${oferta.loja.id}`}

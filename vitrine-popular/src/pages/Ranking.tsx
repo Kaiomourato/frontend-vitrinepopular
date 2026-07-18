@@ -4,6 +4,8 @@ import { Trophy, Users, Store, Heart, Medal } from 'lucide-react'
 import { rankingService } from '@/services/ranking'
 import { OfertaGrid, OfertaGridSkeleton } from '@/components/ofertas/OfertaGrid'
 import { EmptyState, Badge } from '@/components/ui'
+import { MedalBadge } from '@/components/ui/MedalBadge'
+import { posicaoParaMedalha } from '@/lib/ranking'
 import { cn } from '@/lib/utils'
 
 type Aba = 'colaboradores' | 'lojas' | 'ofertas'
@@ -25,14 +27,10 @@ function ListaSkeleton() {
 }
 
 function PosicaoBadge({ posicao }: { posicao: number }) {
-  const cores = ['bg-mel-500 text-white', 'bg-sand-300 text-ink-900', 'bg-terracota-400 text-white']
+  const medalha = posicaoParaMedalha(posicao)
+  if (medalha) return <MedalBadge medalha={medalha} />
   return (
-    <span
-      className={cn(
-        'w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-xs font-bold',
-        posicao < 3 ? cores[posicao] : 'bg-sand-100 text-ink-700'
-      )}
-    >
+    <span className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-xs font-bold bg-sand-100 text-ink-700">
       {posicao + 1}
     </span>
   )
