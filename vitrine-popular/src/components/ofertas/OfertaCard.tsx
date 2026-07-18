@@ -102,7 +102,7 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
             <button
               onClick={handleFavoritar}
               disabled={toggleFavorito.isPending}
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm transition-transform active:scale-90"
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm transition-transform active:scale-90"
               title={favoritado ? 'Remover dos salvos' : 'Salvar'}
             >
               <Heart
@@ -146,8 +146,8 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
         </button>
 
         {/* Rodapé: frescor do dado + ações */}
-        <div className="flex items-center justify-between gap-1 pt-1 border-t border-sand-200">
-          <span className="flex items-center gap-2 text-xs text-ink-500">
+        <div className="flex flex-col gap-2 pt-1 border-t border-sand-200 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 text-xs text-ink-500 flex-wrap">
             <span className="flex items-center gap-1">
               <Clock size={11} />
               Visto {formatarDataRelativa(oferta.dataPostagem)}
@@ -158,26 +158,26 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
                 {oferta.interessados}
               </span>
             )}
-          </span>
-          <div className="flex items-center gap-0.5">
+          </div>
+          <div className="flex items-center gap-2">
             <button
               onClick={handleCompartilhar}
-              className="w-7 h-7 rounded-full flex items-center justify-center text-ink-500 transition-colors hover:bg-sand-100 hover:text-ink-700"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-sand-100 text-ink-500 transition-colors hover:bg-sand-200 hover:text-ink-700"
               title="Compartilhar"
             >
-              <Share2 size={13} />
+              <Share2 size={16} />
             </button>
             <button
               onClick={handleVotarAcabou}
               disabled={votou || votando}
               className={cn(
-                'flex items-center gap-1 text-xs px-2 py-1 rounded-full transition-colors disabled:cursor-not-allowed',
-                votou ? 'text-perigo-600 bg-perigo-50' : 'text-ink-500 hover:bg-sand-100'
+                'flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed',
+                votou ? 'bg-perigo-50 text-perigo-600' : 'bg-sand-100 text-ink-700 hover:bg-sand-200'
               )}
               title="Sinalizar que acabou"
             >
-              <ThumbsDown size={12} />
-              {oferta.votosAcabou > 0 && <span>{oferta.votosAcabou}</span>}
+              <ThumbsDown size={16} />
+              Acabou{oferta.votosAcabou > 0 && ` (${oferta.votosAcabou})`}
             </button>
           </div>
         </div>

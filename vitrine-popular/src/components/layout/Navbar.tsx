@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, ShoppingBag, Plus, Compass, LayoutDashboard, LogOut, Heart, ShieldAlert, Trophy } from 'lucide-react'
+import { Search, Plus, Compass, LayoutDashboard, LogOut, Heart, ShieldAlert, Trophy } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
 
@@ -38,10 +38,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-sand-200 bg-white">
       <div className="container-app flex items-center gap-4 h-16">
-        <Link to="/" className="flex items-center gap-2 shrink-0 font-display font-extrabold text-lg tracking-tight text-terracota-600">
-          <ShoppingBag size={22} />
-          <span className="hidden sm:block uppercase tracking-wide">Vitrine Popular</span>
-          <span className="sm:hidden">VP</span>
+        <Link to="/" className="shrink-0 font-display font-extrabold text-lg tracking-tight text-terracota-600 uppercase">
+          Vitrine Popular
         </Link>
 
         <NavLink
