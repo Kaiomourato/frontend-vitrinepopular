@@ -88,9 +88,9 @@ function HomeHeader() {
               />
             </Link>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wide text-mel-400">Você está no</p>
+              <p className="text-[11px] font-bold uppercase tracking-wide text-mel-400">Bem vindo à</p>
               <p className="flex items-center gap-1.5 font-display font-extrabold text-[17px] text-white">
-                <MapPin size={16} /> Centro, Picos-PI
+                <MapPin size={16} />Picos-PI
               </p>
             </div>
           </div>
