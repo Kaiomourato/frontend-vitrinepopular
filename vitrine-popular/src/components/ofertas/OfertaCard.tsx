@@ -87,15 +87,17 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
           <PlaceholderFavo />
         )}
 
-        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1.5">
+        <div className="absolute top-2.5 left-2.5 flex flex-col items-start gap-2">
           {ouro && <SeloOuro />}
-          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white backdrop-blur-sm bg-ink-900/55">
-            {oferta.categoria.nome}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full text-white backdrop-blur-sm bg-ink-900/55">
+              {oferta.categoria.nome}
+            </span>
+            {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
+          </div>
         </div>
 
-        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
-          {oferta.status === 'ATIVA' && <Badge variant="success">Disponível</Badge>}
+        <div className="absolute top-2.5 right-2.5 flex items-center">
           {isAutenticado && (
             <button
               onClick={handleFavoritar}
