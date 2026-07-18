@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Search, MapPin, Hexagon } from 'lucide-react'
+import logo from '@/assets/logo.png'
 import { useAuthStore } from '@/store/authStore'
 import { useOfertasInfinitas } from '@/hooks/useOfertasInfinitas'
 import { categoriasService, lojasService } from '@/services/lojas'
@@ -78,10 +79,21 @@ function HomeHeader() {
       />
       <div className="relative container-app !px-0 flex items-center justify-between gap-3 mb-4">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-mel-400">Você está no</p>
-          <p className="flex items-center gap-1.5 font-display font-extrabold text-[17px] text-white">
-            <MapPin size={16} /> Centro, Picos-PI
-          </p>
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center shrink-0 text-terracota-500">
+              <img
+                src={logo}
+                alt="Vitrine Popular"
+                className="h-14 w-auto"
+              />
+            </Link>
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wide text-mel-400">Você está no</p>
+              <p className="flex items-center gap-1.5 font-display font-extrabold text-[17px] text-white">
+                <MapPin size={16} /> Centro, Picos-PI
+              </p>
+            </div>
+          </div>
         </div>
 
         {isAutenticado && gamificacao ? (

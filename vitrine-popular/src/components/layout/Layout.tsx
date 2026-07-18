@@ -7,9 +7,11 @@ import { OfflineBanner } from './OfflineBanner'
 // mobile. O <Outlet /> é onde o React Router renderiza a página atual.
 export function Layout() {
   const location = useLocation()
+  const isHome = location.pathname === '/'
+
   return (
     <div className="min-h-screen flex flex-col bg-cream-50">
-      <Navbar />
+      {!isHome && <Navbar />}
       <OfflineBanner />
       <main className="flex-1 pb-24 md:pb-0">
         {/* key força o re-mount por rota, retriggando a transição suave */}
