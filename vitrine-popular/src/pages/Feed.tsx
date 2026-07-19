@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Search, MapPin } from 'lucide-react'
+import { Search } from 'lucide-react'
 import logo from '@/assets/logo.png'
 import vitrineImg from '@/assets/Vitrine Popular verde.png'
 import { useAuthStore } from '@/store/authStore'
@@ -106,7 +106,7 @@ function HomeHeader() {
                 )}
               </Link>
             </div>
-            
+
             <div className="mt-1 ml-7">
               <p className="text-[13px] font-display font-extrabold tracking-wide text-white">
                 Bem vindo à <span className="inline-flex items-center gap-1 text-mel-400">Picos-PI</span>
