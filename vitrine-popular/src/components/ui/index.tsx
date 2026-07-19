@@ -55,7 +55,7 @@ export function Badge({ children, variant = 'default', className }: BadgeProps) 
     danger:  'bg-perigo-600 text-white',
   }
   return (
-    <span className={cn('inline-flex items-center gap-1 text-[11.5px] font-bold tracking-wide px-2.5 py-1 rounded-full shadow-sm', variants[variant], className)}>
+    <span className={cn('inline-flex items-center gap-1 text-[11px] font-bold tracking-wide px-2 py-0.5 rounded-full shadow-sm', variants[variant], className)}>
       {children}
     </span>
   )
