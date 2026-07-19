@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Search, MapPin, Hexagon } from 'lucide-react'
+import { Search, MapPin } from 'lucide-react'
 import logo from '@/assets/logo.png'
+import vitrineImg from '@/assets/Vitrine Popular verde.png'
 import { useAuthStore } from '@/store/authStore'
 import { useOfertasInfinitas } from '@/hooks/useOfertasInfinitas'
 import { categoriasService, lojasService } from '@/services/lojas'
@@ -58,6 +59,7 @@ function HomeHeader() {
   const navigate = useNavigate()
   const { isAutenticado, usuario } = useAuthStore()
   const [busca, setBusca] = useState('')
+  const [imgError, setImgError] = useState(false)
 
   const { data: gamificacao } = useQuery({
     queryKey: ['gamificacao', usuario?.id],
@@ -71,7 +73,10 @@ function HomeHeader() {
   }
 
   return (
-    <div className="relative overflow-hidden bg-ink-900 px-4 pt-5 pb-7 md:rounded-b-2xl">
+    <div
+      className="relative overflow-hidden px-4 pt-5 pb-7 md:rounded-b-2xl"
+      style={{ background: 'linear-gradient(90deg, #055636 0%, #045A36 100%)' }}
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-10 -top-10 w-44 h-44 bg-mel-500/15"
@@ -79,29 +84,41 @@ function HomeHeader() {
       />
       <div className="relative container-app !px-0 flex items-center justify-between gap-3 mb-4">
         <div>
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center shrink-0 text-terracota-500">
-              <img
-                src={logo}
-                alt="Vitrine Popular"
-                className="h-14 w-auto"
-              />
-            </Link>
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-wide text-mel-400">Bem vindo à</p>
-              <p className="flex items-center gap-1.5 font-display font-extrabold text-[17px] text-white">
-                <MapPin size={16} />Picos-PI
+          <div className="flex flex-col items-start">
+            <div className="flex items-center gap-3">
+              <Link to="/" className="flex items-center shrink-0 text-terracota-500">
+                <img
+                  src={logo}
+                  alt="Vitrine Popular"
+                  className="h-14 w-auto"
+                />
+                {!imgError ? (
+                  <div className="-ml-4 flex items-center">
+                    <img
+                      src={vitrineImg}
+                      alt="Vitrine Popular verde"
+                      onError={() => setImgError(true)}
+                      className="h-14 w-auto block"
+                    />
+                  </div>
+                ) : (
+                  <span className="ml-1 text-white font-bold text-lg">Vitrine popular</span>
+                )}
+              </Link>
+            </div>
+            <div className="mt-1 ml-7">
+              <p className="text-[13px] font-display font-extrabold tracking-wide text-white">
+                Bem vindo à <span className="inline-flex items-center gap-1 text-mel-400">Picos-PI</span>
               </p>
             </div>
           </div>
         </div>
 
-        {isAutenticado && gamificacao ? (
+            {isAutenticado && gamificacao ? (
           <Link
             to="/perfil"
             className="flex items-center gap-1.5 bg-mel-500/15 text-mel-400 font-rounded font-bold text-[13px] px-3 py-1.5 rounded-full shrink-0"
           >
-            <Hexagon size={14} className="fill-current" />
             {gamificacao.contribuicoesAprovadas}
           </Link>
         ) : !isAutenticado ? (
