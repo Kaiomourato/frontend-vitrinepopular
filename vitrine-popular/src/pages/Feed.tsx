@@ -66,6 +66,7 @@ function HomeHeader() {
     queryFn: () => gamificacaoService.buscarPorUsuario(usuario!.id),
     enabled: !!usuario?.id,
   })
+  
 
   function handleBusca(e: React.FormEvent) {
     e.preventDefault()

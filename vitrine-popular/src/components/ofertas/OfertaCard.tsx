@@ -97,23 +97,21 @@ export function OfertaCard({ oferta, onVotoAcabou, index = 0 }: OfertaCardProps)
           </div>
         </div>
 
-        <div className="absolute top-2.5 right-2.5 flex items-center">
-          {isAutenticado && (
-            <button
-              onClick={handleFavoritar}
-              disabled={toggleFavorito.isPending}
-              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm transition-transform active:scale-90"
-              title={favoritado ? 'Remover dos salvos' : 'Salvar'}
-            >
-              <Heart
-                size={16}
-                fill={favoritado ? 'var(--color-terracota-500)' : 'none'}
-                stroke={favoritado ? 'var(--color-terracota-500)' : 'var(--color-ink-500)'}
-                className={favoritado ? 'motion-safe:animate-pulsar' : ''}
-              />
-            </button>
-          )}
-        </div>
+        {isAutenticado && (
+          <button
+            onClick={handleFavoritar}
+            disabled={toggleFavorito.isPending}
+            className="absolute bottom-2.5 right-2.5 w-10 h-10 rounded-full flex items-center justify-center bg-white/92 backdrop-blur-sm shadow-sm transition-transform active:scale-90"
+            title={favoritado ? 'Remover dos salvos' : 'Salvar'}
+          >
+            <Heart
+              size={16}
+              fill={favoritado ? 'var(--color-terracota-500)' : 'none'}
+              stroke={favoritado ? 'var(--color-terracota-500)' : 'var(--color-ink-500)'}
+              className={favoritado ? 'motion-safe:animate-pulsar' : ''}
+            />
+          </button>
+        )}
       </div>
 
       {/* Conteúdo */}
