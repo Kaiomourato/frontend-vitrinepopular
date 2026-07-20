@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { ShoppingBag, Mail, Lock } from 'lucide-react'
+import vitrineLong from '@/assets/logo.png'
 import { authService } from '@/services/auth'
 import { useAuthStore } from '@/store/authStore'
 import { Input } from '@/components/ui/Input'
@@ -48,8 +49,8 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-cream-50">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 font-display font-extrabold text-xl tracking-tight text-terracota-600">
-            <ShoppingBag size={28} /> <span className="uppercase tracking-wide">Vitrine Popular</span>
+          <Link to="/" className="inline-flex items-center gap-2 font-display font-extrabold text-xl tracking-tight">
+            <img src={vitrineLong} alt="Vitrine Popular" className="h-25 md:h-20 w-auto mx-auto" />
           </Link>
           <h1 className="mt-4 font-display text-display-sm font-extrabold text-ink-900">Entrar na sua conta</h1>
           <p className="text-sm mt-1 text-ink-700">

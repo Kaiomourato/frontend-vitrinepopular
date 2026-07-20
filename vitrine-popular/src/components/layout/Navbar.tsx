@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom'
 import { Search, Plus, Compass, LayoutDashboard, LogOut, Heart, ShieldAlert, Trophy } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
+import vitrineLong from '@/assets/Vitrine Popular long.png'
 import { cn } from '@/lib/utils'
 
 // No mobile a navegação principal é a BottomNav — este topo fica só com a
@@ -35,11 +36,25 @@ export function Navbar() {
     navigate('/')
   }
 
+  const [imgError, setImgError] = useState(false)
+
   return (
-    <header className="sticky top-0 z-50 border-b border-sand-200 bg-white">
+    <header
+      className="sticky top-0 z-50 border-b border-sand-200"
+      style={{ background: 'linear-gradient(90deg, #055636 0%, #045A36 100%)' }}
+    >
       <div className="container-app flex items-center gap-4 h-16">
-        <Link to="/" className="shrink-0 font-display font-extrabold text-lg tracking-tight text-terracota-600 uppercase">
-          Vitrine Popular
+        <Link to="/" className="shrink-0 flex items-center">
+          {!imgError ? (
+            <img
+              src={vitrineLong}
+              alt="Vitrine Popular"
+              onError={() => setImgError(true)}
+              className="h-14 md:h-20 w-auto"
+            />
+          ) : (
+            <span className="shrink-0 font-display font-extrabold text-lg tracking-tight text-white uppercase">Vitrine Popular</span>
+          )}
         </Link>
 
         <NavLink

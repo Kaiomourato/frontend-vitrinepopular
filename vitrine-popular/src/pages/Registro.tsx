@@ -6,6 +6,7 @@ import {
   ShoppingBag, User, Mail, Lock, Store, Users,
   ChevronRight, ChevronLeft, KeyRound, PlusCircle, Search
 } from 'lucide-react'
+import vitrineLong from '@/assets/Vitrine Popular long.png'
 import { authService } from '@/services/auth'
 import { lojasService } from '@/services/lojas'
 import { useAuthStore } from '@/store/authStore'
@@ -185,8 +186,8 @@ export function Registro() {
       <div className="w-full max-w-md">
 
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 font-display font-extrabold text-xl tracking-tight text-terracota-600">
-            <ShoppingBag size={28} /> <span className="uppercase tracking-wide">Vitrine Popular</span>
+          <Link to="/" className="inline-flex items-center gap-2 font-display font-extrabold text-xl tracking-tight">
+            <img src={vitrineLong} alt="Vitrine Popular" className="h-14 md:h-20 w-auto mx-auto" />
           </Link>
           <h1 className="mt-4 font-display text-display-sm font-extrabold text-ink-900">{titulo()}</h1>
           {passo === 1 && (

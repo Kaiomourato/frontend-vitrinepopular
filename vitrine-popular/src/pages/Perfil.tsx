@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag, Trophy, Camera } from 'lucide-react'
+import logo from '@/assets/logo.png'
 import { useAuthStore } from '@/store/authStore'
 import { gamificacaoService } from '@/services/gamificacao'
 import { authService } from '@/services/auth'
@@ -55,16 +56,16 @@ export function Perfil() {
 
   if (!isAutenticado || !usuario) {
     return (
-      <div className="container-app py-10 flex flex-col items-center text-center gap-4 max-w-sm mx-auto">
+      <div className="container-app py-10 flex flex-col items-center text-center gap-1 max-w-sm mx-auto">
         <div
-          className="w-16 h-16 flex items-center justify-center bg-terracota-50 text-terracota-600"
+          className="w-40 h-40 flex items-center justify-center bg-terracota-50 text-terracota-600 overflow-hidden"
           style={{ clipPath: 'var(--hex-clip)' }}
         >
-          <ShoppingBag size={28} />
+          <img src={logo} alt="Vitrine Popular" className="w-full h-full object-contain" />
         </div>
         <div>
           <p className="font-display text-display-sm font-extrabold text-ink-900">Entre para salvar seus achados</p>
-          <p className="text-sm mt-1 text-ink-700">
+          <p className="text-sm mt-0.5 text-ink-700">
             Faça login para favoritar ofertas e acompanhar o que aparece no comércio local.
           </p>
         </div>
@@ -88,7 +89,7 @@ export function Perfil() {
         <div className="relative flex items-center gap-4">
           <div className="relative shrink-0">
             <div
-              className="w-16 h-16 flex items-center justify-center font-display font-black text-2xl bg-gradient-to-br from-terracota-500 to-mel-500 shadow-md overflow-hidden"
+              className="w-20 h-20 flex items-center justify-center font-display font-black text-3xl bg-gradient-to-br from-terracota-500 to-mel-500 shadow-md overflow-hidden"
               style={{ clipPath: 'var(--hex-clip)' }}
             >
               {usuario.fotoUrl ? (
