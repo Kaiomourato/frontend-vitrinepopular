@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  ShoppingBag, User, Mail, Lock, Store, Users,
+  User, Mail, Lock, Store, Users,
   ChevronRight, ChevronLeft, KeyRound, PlusCircle, Search
 } from 'lucide-react'
 import vitrineLong from '@/assets/Vitrine Popular long.png'

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, ShoppingBag, Trophy, Camera } from 'lucide-react'
+import { Heart, LayoutDashboard, ShieldAlert, LogOut, Plus, Trophy, Camera } from 'lucide-react'
 import logo from '@/assets/logo.png'
 import { useAuthStore } from '@/store/authStore'
 import { gamificacaoService } from '@/services/gamificacao'
